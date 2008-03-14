@@ -60,7 +60,9 @@ public final class Scheduler extends Thread {
 	/** Get the next job on the "todo" list */
 	protected synchronized Job firstJob() {
 		while(todo.isEmpty()) {
-			try { wait(); }
+			try {
+				wait();
+			}
 			catch(InterruptedException e) {
 				handler.handleException(e);
 			}
@@ -76,7 +78,9 @@ public final class Scheduler extends Thread {
 		long delay = job.nextTime.getTime() -
 			System.currentTimeMillis();
 		while(delay > 0) {
-			try { wait(delay); }
+			try {
+				wait(delay);
+			}
 			catch(InterruptedException e) {
 				handler.handleException(e);
 			}
@@ -92,7 +96,9 @@ public final class Scheduler extends Thread {
 	public void run() {
 		Job job = nextJob(null);
 		while(!isInterrupted()) {
-			try { job.performTask(); }
+			try {
+				job.performTask();
+			}
 			catch(Exception e) {
 				handler.handleException(e);
 			}
@@ -114,12 +120,7 @@ public final class Scheduler extends Thread {
 
 	/** Remove a (runnable) job from this worker thread */
 	public synchronized void removeJob(Job job) {
-		try {
-			todo.remove(job);
-			notify();
-		}
-		catch(ClassCastException e) {
-			System.err.println("NO SUCH JOB");
-		}
+		todo.remove(job);
+		notify();
 	}
 }
