@@ -112,13 +112,13 @@ public final class Scheduler extends Thread {
 		}
 	}
 
-	/** Add a (runnable) job for this worker thread to perform */
+	/** Add a job for this scheduler to perform */
 	public synchronized void addJob(Job job) {
 		todo.add(job);
 		notify();
 	}
 
-	/** Remove a (runnable) job from this worker thread */
+	/** Remove a job from this scheduler */
 	public synchronized void removeJob(Job job) {
 		todo.remove(job);
 		notify();
