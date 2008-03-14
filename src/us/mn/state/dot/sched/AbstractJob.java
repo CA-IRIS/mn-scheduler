@@ -22,8 +22,8 @@ package us.mn.state.dot.sched;
 abstract public class AbstractJob extends Job {
 
 	/** Exception handler for scheduler thread */
-	static public final Scheduler.ExceptionHandler HANDLER =
-		new Scheduler.ExceptionHandler()
+	static public final ExceptionHandler HANDLER =
+		new ExceptionHandler()
 	{
 		public void handleException(Exception e) {
 //			new ExceptionDialog(e).setVisible(true);

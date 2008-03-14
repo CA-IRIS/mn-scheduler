@@ -24,11 +24,6 @@ import java.util.TreeSet;
  */
 public final class Scheduler extends Thread {
 
-	/** Scheduler exception handler */
-	static public interface ExceptionHandler {
-		public void handleException(Exception e);
-	}
-
 	/** Set of scheduled jobs to do */
 	protected final TreeSet<Job> todo = new TreeSet<Job>();
 
