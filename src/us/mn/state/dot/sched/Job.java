@@ -47,8 +47,8 @@ abstract public class Job implements Comparable {
 	 * @param o Time interval offset to schedule the job
 	 */
 	public Job(int iField, int i, int oField, int o) {
-		if(i < 0) throw new
-			IllegalArgumentException("Bad interval");
+		if(i < 0)
+			throw new IllegalArgumentException("Bad interval:" + i);
 		Date time = new Date(0);
 		Calendar c = Calendar.getInstance();
 		c.setTime(time);
@@ -57,8 +57,8 @@ abstract public class Job implements Comparable {
 		c.setTime(time);
 		c.add(oField, o);
 		offset = c.getTime().getTime();
-		if(o < 0 || offset >= interval) throw new
-			IllegalArgumentException("Bad offset");
+		if(o < 0 || offset >= interval)
+			throw new IllegalArgumentException("Bad offset:" + o);
 		nextTime = new Date();
 		computeNextTime();
 	}
@@ -88,9 +88,10 @@ abstract public class Job implements Comparable {
 			c.get(Calendar.DST_OFFSET);
 		long now = c.getTime().getTime();
 		long last = (now - off) / interval * interval;
-		if(last > nextTime.getTime() + off)
+		if(last > nextTime.getTime() + off) {
 			System.err.println(nextTime +
 			" MISSED EVENT, interval: " + interval);
+		}
 		nextTime.setTime(last + interval + off);
 	}
 
@@ -98,7 +99,9 @@ abstract public class Job implements Comparable {
 	public void performTask() throws Exception {
 		if(interval > 0)
 			computeNextTime();
-		try { perform(); }
+		try {
+			perform();
+		}
 		finally {
 			complete();
 		}
