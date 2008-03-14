@@ -33,7 +33,7 @@ public class Completer {
 	protected final Scheduler scheduler;
 
 	/** Job for scheduler to perform at completion */
-	protected final Scheduler.Job job;
+	protected final Job job;
 
 	/** Time stamp of current task */
 	protected Calendar stamp;
@@ -44,7 +44,7 @@ public class Completer {
 	}
 
 	/** Create a completer */
-	public Completer(String n, Scheduler s, Scheduler.Job j) {
+	public Completer(String n, Scheduler s, Job j) {
 		name = n;
 		scheduler = s;
 		job = j;

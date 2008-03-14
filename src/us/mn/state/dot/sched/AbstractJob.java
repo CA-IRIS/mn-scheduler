@@ -19,7 +19,7 @@ package us.mn.state.dot.sched;
  *
  * @author Douglas Lau
  */
-abstract public class AbstractJob extends Scheduler.Job {
+abstract public class AbstractJob extends Job {
 
 	/** Exception handler for scheduler thread */
 	static public final Scheduler.ExceptionHandler HANDLER =
@@ -34,7 +34,7 @@ abstract public class AbstractJob extends Scheduler.Job {
 	static protected final Scheduler WORKER = new Scheduler(HANDLER);
 
 	/** Add a job to the worker scheduler */
-	static public void addJob(Scheduler.Job job) {
+	static public void addJob(Job job) {
 		WORKER.addJob(job);
 	}
 
