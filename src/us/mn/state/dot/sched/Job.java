@@ -80,6 +80,11 @@ abstract public class Job implements Comparable<Job> {
 		nextTime = c.getTime();
 	}
 
+	/** Create a one-shot job to schedule immediately */
+	public Job() {
+		this(0);
+	}
+
 	/** Compute the next time this job will be scheduled */
 	protected void computeNextTime() {
 		Calendar c = Calendar.getInstance();
