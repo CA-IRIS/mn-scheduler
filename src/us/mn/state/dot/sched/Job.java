@@ -22,7 +22,7 @@ import java.util.Date;
  *
  * @author Douglas Lau
  */
-abstract public class Job implements Comparable {
+abstract public class Job implements Comparable<Job> {
 
 	/** Job identifier */
 	static protected long job_id = 0;
@@ -113,8 +113,7 @@ abstract public class Job implements Comparable {
 	public void complete() {}
 
 	/** Compare this job with another one */
-	public int compareTo(Object o) {
-		Job other = (Job)o;
+	public int compareTo(Job other) {
 		long c = nextTime.compareTo(other.nextTime);
 		if(c == 0)
 			c = interval - other.interval;
