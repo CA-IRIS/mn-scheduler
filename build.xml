@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+
+<!-- ====================================================== -->
+<!-- scheduler build file                                   -->
+<!-- Author: Douglas Lau                                    -->
+<!-- Legal: Copyright (c) 2008 Minnesota Department of      -->
+<!-- 		Transportation. All Rights Reserved.        -->
+<!-- ====================================================== -->
+<project default="jar" basedir=".">
+	<property file="project.properties"/>
+	<property file="${user.home}/.ant.properties"/>
+
+	<property name="build.dir" value="build"/>
+	<property name="build.etc" value="${build.dir}/etc"/>
+	<property name="build.lib" value="${build.dir}/lib"/>
+	<property name="build.src" value="${build.dir}/src"/>
+	<property name="build.classes" value="${build.dir}/classes"/>
+	<property name="build.docs" value="${build.dir}/docs"/>
+
+	<property name="src.dir" value="src"/>
+	<property name="etc.dir" value="etc"/>
+	<property name="manifest" value="MANIFEST.MF"/>
+	<property name="lib.dir" value="lib"/>
+
+	<!-- =========================== -->
+	<!-- Prepare the build directory -->
+	<!-- =========================== -->
+	<target name="prepare">
+		<tstamp/>
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${build.etc}"/>
+		<mkdir dir="${build.lib}"/>
+		<mkdir dir="${build.src}"/>
+		<mkdir dir="${build.docs}"/>
+		<copy todir="${build.src}">
+			<fileset dir="${src.dir}">
+				<include name = "**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- ======================= -->
+	<!-- Compile the source code -->
+	<!-- ======================= -->
+	<target name="compile"
+		depends="prepare"
+		description="--> compile the source code">
+		<mkdir dir="${build.classes}"/>
+		<javac srcdir="${build.src}"
+			destdir="${build.classes}"
+			debug="off"
+			optimize="${optimize}"
+			deprecation="on"
+			source="1.5"
+			target="1.5">
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+	</target>
+
+	<!-- =================== -->
+	<!-- Create the jar file -->
+	<!-- =================== -->
+	<target name="jar"
+		depends="compile"
+		description="--> generate the ${name} jar files">
+		<jar jarfile="${build.lib}/${name}-${version}.jar">
+			<fileset dir="${build.classes}">
+				<include name="us/mn/state/dot/sched/**"/>
+			</fileset>
+		</jar>
+	</target>
+
+	<!-- ======================== -->
+	<!-- Create api documentation -->
+	<!-- ======================== -->
+	<target name="javadocs"
+		depends="prepare"
+		description="--> create the javadocs for the project">
+		<mkdir dir="${build.docs}"/>
+		<javadoc packagenames="${packages}"
+			sourcepath="${basedir}/${build.src}"
+			destdir="${build.docs}"
+			author="true"
+			version="true"
+			windowtitle="${name} API"
+			doctitle="${name}"
+			bottom="Copyright &#169; Minnesota Department of
+				Transportation. All Rights Reserved.">
+		</javadoc>
+	</target>
+
+	<!-- =========================================== -->
+	<!-- Clean up build and distribution directories -->
+	<!-- =========================================== -->
+	<target name="clean"
+		description="--> clean up the created directories">
+		<delete dir="${build.dir}"/>
+	</target>
+</project>
