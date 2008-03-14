@@ -25,7 +25,10 @@ import java.util.Date;
 abstract public class Job implements Comparable {
 
 	/** Job identifier */
-	static protected long jobId = 0;
+	static protected long job_id = 0;
+
+	/** Unique job identifier */
+	protected final long id = job_id++;
 
 	/** Next time this job must be performed */
 	protected final Date nextTime;
@@ -35,9 +38,6 @@ abstract public class Job implements Comparable {
 
 	/** Time offset from whole interval boundary */
 	protected final long offset;
-
-	/** Unique job identifier */
-	protected final long id = jobId++;
 
 	/**
 	 * Create a new scheduler job
