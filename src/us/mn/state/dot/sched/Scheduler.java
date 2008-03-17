@@ -25,7 +25,7 @@ import java.util.TreeSet;
 public final class Scheduler extends Thread {
 
 	/** Exception handler */
-	static protected ExceptionHandler handler = null;
+	static protected ExceptionHandler handler;
 
 	/** Set the exception handler */
 	static public void setHandler(ExceptionHandler h) {
