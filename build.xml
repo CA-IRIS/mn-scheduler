@@ -11,16 +11,13 @@
 	<property file="${user.home}/.ant.properties"/>
 
 	<property name="build.dir" value="build"/>
-	<property name="build.etc" value="${build.dir}/etc"/>
 	<property name="build.lib" value="${build.dir}/lib"/>
 	<property name="build.src" value="${build.dir}/src"/>
 	<property name="build.classes" value="${build.dir}/classes"/>
 	<property name="build.docs" value="${build.dir}/docs"/>
 
 	<property name="src.dir" value="src"/>
-	<property name="etc.dir" value="etc"/>
 	<property name="manifest" value="MANIFEST.MF"/>
-	<property name="lib.dir" value="lib"/>
 
 	<!-- =========================== -->
 	<!-- Prepare the build directory -->
@@ -28,7 +25,6 @@
 	<target name="prepare">
 		<tstamp/>
 		<mkdir dir="${build.dir}"/>
-		<mkdir dir="${build.etc}"/>
 		<mkdir dir="${build.lib}"/>
 		<mkdir dir="${build.src}"/>
 		<mkdir dir="${build.docs}"/>
