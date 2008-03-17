@@ -21,17 +21,8 @@ package us.mn.state.dot.sched;
  */
 abstract public class AbstractJob extends Job {
 
-	/** Exception handler for scheduler thread */
-	static public final ExceptionHandler HANDLER =
-		new ExceptionHandler()
-	{
-		public void handleException(Exception e) {
-//			new ExceptionDialog(e).setVisible(true);
-		}
-	};
-
 	/** Worker thread */
-	static protected final Scheduler WORKER = new Scheduler(HANDLER);
+	static protected final Scheduler WORKER = new Scheduler("WORKER");
 
 	/** Add a job to the worker scheduler */
 	static public void addJob(Job job) {

@@ -24,37 +24,35 @@ import java.util.TreeSet;
  */
 public final class Scheduler extends Thread {
 
+	/** Exception handler */
+	static protected ExceptionHandler handler = null;
+
+	/** Set the exception handler */
+	static public void setHandler(ExceptionHandler h) {
+		handler = h;
+	}
+
+	/** Handle an exception */
+	static protected void handleException(Exception e) {
+		if(handler != null)
+			handler.handle(e);
+		else
+			e.printStackTrace();
+	}
+
 	/** Set of scheduled jobs to do */
 	protected final TreeSet<Job> todo = new TreeSet<Job>();
 
-	/** Scheduler's exception handler */
-	protected ExceptionHandler handler;
+	/** Create a new job scheduler */
+	public Scheduler() {
+		this("Job Scheduler");
+	}
 
-	/** Create a new job scheduler with the default exception handler */
+	/** Create a new job scheduler */
 	public Scheduler(String name) {
-		this(name, new ExceptionHandler() {
-			public void handleException(Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/** Create a new job scheduler with a custom exception handler */
-	public Scheduler(ExceptionHandler h) {
-		this("Job Scheduler", h);
-	}
-
-	/** Create a new job scheduler with a custom exception handler */
-	public Scheduler(String name, ExceptionHandler h) {
 		super(name);
-		handler = h;
 		setDaemon(true);
 		start();
-	}
-
-	/** Set a new exception handler */
-	public void setHandler(ExceptionHandler h) {
-		handler = h;
 	}
 
 	/** Get the next job on the "todo" list */
@@ -64,7 +62,7 @@ public final class Scheduler extends Thread {
 				wait();
 			}
 			catch(InterruptedException e) {
-				handler.handleException(e);
+				handleException(e);
 			}
 		}
 		return todo.first();
@@ -82,7 +80,7 @@ public final class Scheduler extends Thread {
 				wait(delay);
 			}
 			catch(InterruptedException e) {
-				handler.handleException(e);
+				handleException(e);
 			}
 			job = firstJob();
 			delay = job.nextTime.getTime() -
@@ -100,7 +98,7 @@ public final class Scheduler extends Thread {
 				job.performTask();
 			}
 			catch(Exception e) {
-				handler.handleException(e);
+				handleException(e);
 			}
 			catch(VirtualMachineError e) {
 				System.err.println("VIRTUAL MACHINE ERROR");

@@ -22,5 +22,5 @@ package us.mn.state.dot.sched;
 public interface ExceptionHandler {
 
 	/** Handle an exception */
-	void handleException(Exception e);
+	boolean handle(Exception e);
 }
