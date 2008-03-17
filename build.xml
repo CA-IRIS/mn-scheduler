@@ -15,9 +15,7 @@
 	<property name="build.src" value="${build.dir}/src"/>
 	<property name="build.classes" value="${build.dir}/classes"/>
 	<property name="build.docs" value="${build.dir}/docs"/>
-
 	<property name="src.dir" value="src"/>
-	<property name="manifest" value="MANIFEST.MF"/>
 
 	<!-- =========================== -->
 	<!-- Prepare the build directory -->
