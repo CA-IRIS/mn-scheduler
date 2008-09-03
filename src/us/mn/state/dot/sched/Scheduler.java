@@ -24,18 +24,23 @@ import java.util.TreeSet;
  */
 public final class Scheduler extends Thread {
 
-	/** Exception handler */
-	static protected ExceptionHandler handler;
+	/** Default exception handler */
+	static protected ExceptionHandler HANDLER;
 
-	/** Set the exception handler */
+	/** Set the default exception handler */
 	static public void setHandler(ExceptionHandler h) {
-		handler = h;
+		HANDLER = h;
 	}
 
+	/** Exception handler */
+	protected final ExceptionHandler handler;
+
 	/** Handle an exception */
-	static protected void handleException(Exception e) {
+	protected void handleException(Exception e) {
 		if(handler != null)
 			handler.handle(e);
+		else if(HANDLER != null)
+			HANDLER.handle(e);
 		else
 			e.printStackTrace();
 	}
@@ -50,7 +55,13 @@ public final class Scheduler extends Thread {
 
 	/** Create a new job scheduler */
 	public Scheduler(String name) {
+		this(name, null);
+	}
+
+	/** Create a new job scheduler */
+	public Scheduler(String name, ExceptionHandler h) {
 		super(name);
+		handler = h;
 		setDaemon(true);
 		start();
 	}
