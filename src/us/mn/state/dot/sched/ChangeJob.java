@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2006-2008  Minnesota Department of Transportation
+ * Copyright (C) 2006-2009  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@ package us.mn.state.dot.sched;
 
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -34,6 +35,12 @@ abstract public class ChangeJob extends GuiJob implements ChangeListener {
 	public ChangeJob(JComponent f, JSpinner s) {
 		super(f, s);
 		s.addChangeListener(this);
+	}
+
+	/** Create a new change job */
+	public ChangeJob(JComponent f, JTabbedPane p) {
+		super(f, p);
+		p.addChangeListener(this);
 	}
 
 	/** State changed (from ChangeListener interface) */
