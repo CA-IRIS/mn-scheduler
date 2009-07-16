@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2008  Minnesota Department of Transportation
+ * Copyright (C) 2000-2009  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,6 +108,9 @@ abstract public class Job implements Comparable<Job> {
 		}
 		finally {
 			complete();
+			synchronized(this) {
+				notify();
+			}
 		}
 	}
 
@@ -131,5 +134,18 @@ abstract public class Job implements Comparable<Job> {
 		if(c > 0)
 			return 1;
 		return 0;
+	}
+
+	/** Wait for the job to complete */
+	public synchronized void waitForCompletion() {
+		while(true) {
+			try {
+				wait();
+				return;
+			}
+			catch(InterruptedException e) {
+				// keep waiting
+			}
+		}
 	}
 }
