@@ -14,15 +14,35 @@
      GNU General Public License for more details.  -->
 
 <project default="jar" basedir=".">
+
+	<!-- Base directory configuration -->
+	<property name="src.dir" value="src"/>
+	<property name="lib.dir" value="lib"/>
+	<property name="test.dir" location="test"/>
+
+	<!-- Property configuration -->
 	<property file="project.properties"/>
 	<property file="${user.home}/.ant.properties"/>
 
+	<!-- Build directory configuration -->
 	<property name="build.dir" value="build"/>
 	<property name="build.lib" value="${build.dir}/lib"/>
 	<property name="build.src" value="${build.dir}/src"/>
 	<property name="build.classes" value="${build.dir}/classes"/>
 	<property name="build.docs" value="${build.dir}/docs"/>
-	<property name="src.dir" value="src"/>
+	<property name="build.test" location="${build.dir}/test"/>
+	<property name="build.reports" location="${build.dir}/reports"/>
+
+	<!-- Compiler configuration -->
+	<property name="build.compiler.pedantic" value="true"/>
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="*.jar"/>
+	</path>
+	<path id="junit.classpath">
+		<path refid="classpath"/>
+		<pathelement location="${build.dir}/classes"/>
+		<pathelement location="${build.dir}/test"/>
+	</path>
 
 	<!-- Prepare the build directory -->
 	<target name="prepare">
@@ -79,6 +99,51 @@
 		         bottom="Copyright &#169; Minnesota Department of
 				Transportation. All Rights Reserved.">
 		</javadoc>
+	</target>
+
+	<!-- Prepare junit test directories -->
+	<target name="prepare-junit"
+		depends="prepare"
+		description="--> prepare junit test cases">
+		<delete dir="${build.reports}" />
+		<mkdir dir="${build.test}" />
+		<mkdir dir="${build.reports}" />
+	</target>
+
+	<!-- Compile junit test cases -->
+	<target name="compile-junit"
+		depends="compile, prepare-junit"
+		description="--> compile junit test cases">
+		<javac srcdir="${test.dir}"
+		       includeAntRuntime="true"
+		       destdir="${build.test}"
+		       debug="true"
+		       source="1.5"
+		       target="1.5">
+			<classpath refid="junit.classpath"/>
+		</javac>
+	</target>
+
+	<!-- Run junit test cases -->
+	<target name="test" depends="compile-junit"
+		description="--> run junit test cases">
+		<junit printsummary="yes" 
+		       fork="yes" 
+		       haltonfailure="yes" 
+		       errorProperty="test.failed" 
+		       failureProperty="test.failed">
+			<assertions><enable/></assertions>
+			<classpath refid="junit.classpath"/>
+			<formatter type="plain" usefile="false"/>
+			<formatter type="xml" usefile="true"/>
+			<jvmarg value="-Ddebug=true"/>
+			<batchtest todir="${build.reports}">
+				<fileset dir="${build.test}"
+				         includes="**/*Test.class"/>
+			</batchtest>
+		</junit>
+		<fail message="Junit tests failed. Check log and/or reports."
+		       if="test.failed"/>
 	</target>
 
 	<!-- Clean up build and distribution directories -->
