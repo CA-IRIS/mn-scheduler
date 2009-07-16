@@ -39,6 +39,9 @@ abstract public class Job implements Comparable<Job> {
 	/** Time offset from whole interval boundary */
 	protected final long offset;
 
+	/** Count of how many times the job has completed */
+	protected int n_complete = 0;
+
 	/**
 	 * Create a new scheduler job
 	 * @param iField java.util.Calendar field for time interval
@@ -109,6 +112,7 @@ abstract public class Job implements Comparable<Job> {
 		finally {
 			complete();
 			synchronized(this) {
+				n_complete++;
 				notify();
 			}
 		}
@@ -138,6 +142,8 @@ abstract public class Job implements Comparable<Job> {
 
 	/** Wait for the job to complete */
 	public synchronized void waitForCompletion() {
+		if(n_complete > 0)
+			return;
 		while(true) {
 			try {
 				wait();
