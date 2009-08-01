@@ -142,12 +142,9 @@ abstract public class Job implements Comparable<Job> {
 
 	/** Wait for the job to complete */
 	public synchronized void waitForCompletion() {
-		if(n_complete > 0)
-			return;
-		while(true) {
+		while(n_complete == 0) {
 			try {
-				wait();
-				return;
+				wait(1000);
 			}
 			catch(InterruptedException e) {
 				// keep waiting
