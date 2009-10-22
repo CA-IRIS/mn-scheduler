@@ -46,7 +46,9 @@ abstract public class ChangeJob extends GuiJob implements ChangeListener {
 
 	/** Create a new change job */
 	public ChangeJob(AbstractButton b) {
-		super(b);
+		// Don't have the GuiJob disable the button after selection, or
+		// else we'll get into a ChangeEvent loop ...
+		super(null);
 		b.addChangeListener(this);
 	}
 
