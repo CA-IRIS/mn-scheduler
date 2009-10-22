@@ -14,6 +14,7 @@
  */
 package us.mn.state.dot.sched;
 
+import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
@@ -41,6 +42,12 @@ abstract public class ChangeJob extends GuiJob implements ChangeListener {
 	public ChangeJob(JComponent f, JTabbedPane p) {
 		super(f, p);
 		p.addChangeListener(this);
+	}
+
+	/** Create a new change job */
+	public ChangeJob(AbstractButton b) {
+		super(b);
+		b.addChangeListener(this);
 	}
 
 	/** State changed (from ChangeListener interface) */
