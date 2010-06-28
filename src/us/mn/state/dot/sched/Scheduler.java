@@ -67,30 +67,20 @@ public final class Scheduler extends Thread {
 	}
 
 	/** Get the next job on the "todo" list */
-	protected synchronized Job firstJob() {
+	protected synchronized Job firstJob() throws InterruptedException {
 		while(todo.isEmpty()) {
-			try {
-				wait();
-			}
-			catch(InterruptedException e) {
-				handleException(e);
-			}
+			wait();
 		}
 		return todo.first();
 	}
 
 	/** Get the next job for the scheduler to perform */
-	protected synchronized Job nextJob() {
+	protected synchronized Job nextJob() throws InterruptedException {
 		Job job = firstJob();
 		long delay = job.nextTime.getTime() -
 			System.currentTimeMillis();
 		while(delay > 0) {
-			try {
-				wait(delay);
-			}
-			catch(InterruptedException e) {
-				handleException(e);
-			}
+			wait(delay);
 			job = firstJob();
 			delay = job.nextTime.getTime() -
 				System.currentTimeMillis();
@@ -101,13 +91,19 @@ public final class Scheduler extends Thread {
 
 	/** Process all scheduled jobs */
 	public void run() {
-		Job job = nextJob();
-		while(!isInterrupted()) {
-			performJob(job);
-			if(job.isRepeating())
-				todo.add(job);
-			job = nextJob();
+		try {
+			Job job = nextJob();
+			while(!isInterrupted()) {
+				performJob(job);
+				if(job.isRepeating())
+					todo.add(job);
+				job = nextJob();
+			}
 		}
+		catch(InterruptedException e) {
+			handleException(e);
+		}
+		System.err.println("STOPPING THREAD: " + getName());
 	}
 
 	/** Perform a job */
