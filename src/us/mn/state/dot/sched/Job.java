@@ -95,6 +95,11 @@ abstract public class Job implements Comparable<Job> {
 		return interval > 0;
 	}
 
+	/** Get the delay time before performing the job, in milliseconds */
+	public long delay() {
+		return nextTime.getTime() - System.currentTimeMillis();
+	}
+
 	/** Compute the next time this job will be scheduled */
 	protected void computeNextTime() {
 		Calendar c = Calendar.getInstance();

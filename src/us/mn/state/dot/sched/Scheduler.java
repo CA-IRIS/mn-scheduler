@@ -92,16 +92,14 @@ public final class Scheduler extends Thread {
 	 * @return Job to be performed. */
 	protected synchronized Job waitJob() throws InterruptedException {
 		Job job = nextJob();
-		long delay = job.nextTime.getTime() -
-			System.currentTimeMillis();
+		long delay = job.delay();
 		while(delay > 0) {
 			wait(delay);
 			// We need to check the next job here in case the job
 			// was removed or a new job was added while we were
 			// waiting
 			job = nextJob();
-			delay = job.nextTime.getTime() -
-				System.currentTimeMillis();
+			delay = job.delay();
 		}
 		todo.remove(job);
 		return job;
