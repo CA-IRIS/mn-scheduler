@@ -92,18 +92,23 @@ public final class Scheduler extends Thread {
 	/** Process all scheduled jobs */
 	public void run() {
 		try {
-			Job job = nextJob();
-			while(!isInterrupted()) {
-				performJob(job);
-				if(job.isRepeating())
-					todo.add(job);
-				job = nextJob();
-			}
+			performJobs();
 		}
 		catch(InterruptedException e) {
 			handleException(e);
 		}
 		System.err.println("STOPPING THREAD: " + getName());
+	}
+
+	/** Perform jobs as they are scheduled */
+	protected void performJobs() throws InterruptedException {
+		Job job = nextJob();
+		while(!isInterrupted()) {
+			performJob(job);
+			if(job.isRepeating())
+				todo.add(job);
+			job = nextJob();
+		}
 	}
 
 	/** Perform a job */
