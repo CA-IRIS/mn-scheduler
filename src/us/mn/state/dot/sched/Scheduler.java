@@ -96,6 +96,9 @@ public final class Scheduler extends Thread {
 			System.currentTimeMillis();
 		while(delay > 0) {
 			wait(delay);
+			// We need to check the next job here in case the job
+			// was removed or a new job was added while we were
+			// waiting
 			job = nextJob();
 			delay = job.nextTime.getTime() -
 				System.currentTimeMillis();
