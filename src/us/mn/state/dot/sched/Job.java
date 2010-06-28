@@ -109,10 +109,6 @@ abstract public class Job implements Comparable<Job> {
 			c.get(Calendar.DST_OFFSET);
 		long now = c.getTime().getTime();
 		long last = (now - off) / interval * interval;
-		if(last > nextTime.getTime() + off) {
-			System.err.println(nextTime +
-			" MISSED EVENT, interval: " + interval);
-		}
 		nextTime.setTime(last + interval + off);
 	}
 
