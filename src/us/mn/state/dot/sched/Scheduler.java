@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2008  Minnesota Department of Transportation
+ * Copyright (C) 2000-2010  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,10 +80,8 @@ public final class Scheduler extends Thread {
 	}
 
 	/** Get the next job for the scheduler to perform */
-	protected synchronized Job nextJob(Job job) {
-		if(job != null && job.interval > 0)
-			todo.add(job);
-		job = firstJob();
+	protected synchronized Job nextJob() {
+		Job job = firstJob();
 		long delay = job.nextTime.getTime() -
 			System.currentTimeMillis();
 		while(delay > 0) {
@@ -103,7 +101,7 @@ public final class Scheduler extends Thread {
 
 	/** Process all scheduled jobs */
 	public void run() {
-		Job job = nextJob(null);
+		Job job = nextJob();
 		while(!isInterrupted()) {
 			try {
 				job.performTask();
@@ -117,7 +115,9 @@ public final class Scheduler extends Thread {
 				System.err.println("FATAL: RESTARTING");
 				System.exit(1);
 			}
-			job = nextJob(job);
+			if(job.isRepeating())
+				todo.add(job);
+			job = nextJob();
 		}
 	}
 
