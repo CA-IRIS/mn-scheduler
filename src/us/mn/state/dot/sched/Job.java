@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2009  Minnesota Department of Transportation
+ * Copyright (C) 2000-2010  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,17 +33,18 @@ abstract public class Job implements Comparable<Job> {
 	/** Next time this job must be performed */
 	protected final Date nextTime;
 
-	/** Time interval to perform this job */
+	/** Time interval to perform this job, in milliseconds.  For
+	 * non-repeating jobs, this must be 0. */
 	protected final long interval;
 
-	/** Time offset from whole interval boundary */
+	/** Time offset from whole interval boundary, in milliseconds. */
 	protected final long offset;
 
 	/** Count of how many times the job has completed */
 	protected int n_complete = 0;
 
 	/**
-	 * Create a new scheduler job
+	 * Create a new scheduler job.
 	 * @param iField java.util.Calendar field for time interval
 	 * @param i Time interval to schedule the job
 	 * @param oField java.util.Calendar field for interval offset
@@ -66,7 +67,7 @@ abstract public class Job implements Comparable<Job> {
 	}
 
 	/**
-	 * Create a new scheduler job
+	 * Create a new scheduler job.
 	 * @param iField java.util.Calendar field for time interval
 	 * @param i Time interval to schedule the job
 	 */
@@ -88,6 +89,11 @@ abstract public class Job implements Comparable<Job> {
 		this(0);
 	}
 
+	/** Check if this is a repeating job */
+	public boolean isRepeating() {
+		return interval > 0;
+	}
+
 	/** Compute the next time this job will be scheduled */
 	protected void computeNextTime() {
 		Calendar c = Calendar.getInstance();
@@ -104,7 +110,7 @@ abstract public class Job implements Comparable<Job> {
 
 	/** Perform the task for this job */
 	public void performTask() throws Exception {
-		if(interval > 0)
+		if(isRepeating())
 			computeNextTime();
 		try {
 			perform();
