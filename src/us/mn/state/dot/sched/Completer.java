@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2008  Minnesota Department of Transportation
+ * Copyright (C) 2000-2010  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,12 @@ public class Completer {
 		return stamp;
 	}
 
-	/** Create a completer */
+	/** Create a new completer.
+	 * @param n Name of completer, for debugging.
+	 * @param s Scheduler for job on completion.
+	 * @param j Job to be performed on completion. */
 	public Completer(String n, Scheduler s, Job j) {
+		assert j.isRepeating() == false;
 		name = n;
 		scheduler = s;
 		job = j;
