@@ -103,21 +103,26 @@ public final class Scheduler extends Thread {
 	public void run() {
 		Job job = nextJob();
 		while(!isInterrupted()) {
-			try {
-				job.performTask();
-			}
-			catch(Exception e) {
-				handleException(e);
-			}
-			catch(VirtualMachineError e) {
-				System.err.println("VIRTUAL MACHINE ERROR");
-				e.printStackTrace();
-				System.err.println("FATAL: RESTARTING");
-				System.exit(1);
-			}
+			performJob(job);
 			if(job.isRepeating())
 				todo.add(job);
 			job = nextJob();
+		}
+	}
+
+	/** Perform a job */
+	protected void performJob(Job job) {
+		try {
+			job.performTask();
+		}
+		catch(Exception e) {
+			handleException(e);
+		}
+		catch(VirtualMachineError e) {
+			System.err.println("VIRTUAL MACHINE ERROR");
+			e.printStackTrace();
+			System.err.println("FATAL: RESTARTING");
+			System.exit(1);
 		}
 	}
 
