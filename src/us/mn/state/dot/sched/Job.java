@@ -105,8 +105,9 @@ abstract public class Job implements Comparable<Job> {
 		return nextTime.getTime() - System.currentTimeMillis();
 	}
 
-	/** Compute the next time this job will be scheduled */
-	protected void computeNextTime() {
+	/** Compute the next time this job will be scheduled.  Warning: the
+	 * sort order for the Comparable interface will change. */
+	public void computeNextTime() {
 		nextTime.setTime(computePastTime() + interval);
 	}
 
@@ -124,8 +125,6 @@ abstract public class Job implements Comparable<Job> {
 
 	/** Perform the task for this job */
 	public void performTask() throws Exception {
-		if(isRepeating())
-			computeNextTime();
 		try {
 			perform();
 		}

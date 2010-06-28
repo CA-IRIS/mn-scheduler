@@ -82,8 +82,10 @@ public final class Scheduler extends Thread {
 		Job job = waitJob();
 		while(!isInterrupted()) {
 			performJob(job);
-			if(job.isRepeating())
+			if(job.isRepeating()) {
+				job.computeNextTime();
 				todo.add(job);
+			}
 			job = waitJob();
 		}
 	}
