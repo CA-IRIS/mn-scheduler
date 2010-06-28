@@ -35,24 +35,24 @@ abstract public class Job implements Comparable<Job> {
 		return c.getTimeInMillis();
 	}
 
-	/** Job identifier */
-	static protected long job_id = 0;
+	/** Next available job identifier */
+	static private long next_id = 0;
 
 	/** Unique job identifier */
-	protected final long id = job_id++;
+	private final long id = next_id++;
 
 	/** Time interval to perform this job, in milliseconds.  For
 	 * non-repeating jobs, this must be 0. */
-	protected final long interval;
+	private final long interval;
 
 	/** Time offset from whole interval boundary, in milliseconds. */
-	protected final long offset;
+	private final long offset;
 
 	/** Next time this job must be performed */
-	protected long next_time;
+	private long next_time;
 
 	/** Count of how many times the job has completed */
-	protected int n_complete = 0;
+	private int n_complete = 0;
 
 	/**
 	 * Create a new scheduler job.
@@ -103,7 +103,7 @@ abstract public class Job implements Comparable<Job> {
 
 	/** Compute the next time this job will be scheduled.  Warning: the
 	 * sort order for the Comparable interface will change. */
-	public void computeNextTime() {
+	void computeNextTime() {
 		next_time = computePastTime() + interval;
 	}
 
@@ -120,7 +120,7 @@ abstract public class Job implements Comparable<Job> {
 	}
 
 	/** Perform the task for this job */
-	public void performTask() throws Exception {
+	void performTask() throws Exception {
 		try {
 			perform();
 		}
