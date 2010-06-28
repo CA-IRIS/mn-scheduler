@@ -102,14 +102,18 @@ abstract public class Job implements Comparable<Job> {
 
 	/** Compute the next time this job will be scheduled */
 	protected void computeNextTime() {
+		nextTime.setTime(computePastTime() + interval);
+	}
+
+	/** Compute the most recently past scheduled time */
+	protected long computePastTime() {
 		Calendar c = Calendar.getInstance();
+		long now = c.getTime().getTime();
 		// FIXME: need to figure out and document why ZONE_OFFSET and
 		// DST_OFFSET are needed here ...
 		long off = offset - c.get(Calendar.ZONE_OFFSET) -
 			c.get(Calendar.DST_OFFSET);
-		long now = c.getTime().getTime();
-		long last = (now - off) / interval * interval;
-		nextTime.setTime(last + interval + off);
+		return (now - off) / interval * interval + off;
 	}
 
 	/** Perform the task for this job */
