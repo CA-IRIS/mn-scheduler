@@ -18,7 +18,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Job for the scheduler to perform.
+ * Job for the scheduler to perform.  When the scheduler is ready, the perform
+ * method is called.  The perform method must be implemented by any subclasses.
  *
  * @author Douglas Lau
  */
