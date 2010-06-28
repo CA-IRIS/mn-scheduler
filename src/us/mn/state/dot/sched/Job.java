@@ -25,6 +25,17 @@ import java.util.Date;
  */
 abstract public class Job implements Comparable<Job> {
 
+	/** Calculate a time interval from a Calendar field and value.
+	 * @param field java.util.Calendar field constant.
+	 * @param value Amount of specified field.
+	 * @return Number of milliseconds in interval. */
+	static protected long calculateInterval(int field, int value) {
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(0);
+		c.add(field, value);
+		return c.getTimeInMillis();
+	}
+
 	/** Job identifier */
 	static protected long job_id = 0;
 
@@ -54,14 +65,8 @@ abstract public class Job implements Comparable<Job> {
 	public Job(int iField, int i, int oField, int o) {
 		assert i >= 0;
 		assert o >= 0;
-		Date time = new Date(0);
-		Calendar c = Calendar.getInstance();
-		c.setTime(time);
-		c.add(iField, i);
-		interval = c.getTime().getTime();
-		c.setTime(time);
-		c.add(oField, o);
-		offset = c.getTime().getTime();
+		interval = calculateInterval(iField, i);
+		offset = calculateInterval(oField, o);
 		assert offset < interval;
 		nextTime = new Date();
 		computeNextTime();
