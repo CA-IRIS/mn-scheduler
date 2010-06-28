@@ -15,7 +15,6 @@
 package us.mn.state.dot.sched;
 
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Job for the scheduler to perform.  When the scheduler is ready, the perform
@@ -42,15 +41,15 @@ abstract public class Job implements Comparable<Job> {
 	/** Unique job identifier */
 	protected final long id = job_id++;
 
-	/** Next time this job must be performed */
-	protected final Date nextTime;
-
 	/** Time interval to perform this job, in milliseconds.  For
 	 * non-repeating jobs, this must be 0. */
 	protected final long interval;
 
 	/** Time offset from whole interval boundary, in milliseconds. */
 	protected final long offset;
+
+	/** Next time this job must be performed */
+	protected long next_time;
 
 	/** Count of how many times the job has completed */
 	protected int n_complete = 0;
@@ -68,7 +67,6 @@ abstract public class Job implements Comparable<Job> {
 		interval = calculateInterval(iField, i);
 		offset = calculateInterval(oField, o);
 		assert offset < interval;
-		nextTime = new Date();
 		computeNextTime();
 	}
 
@@ -85,9 +83,7 @@ abstract public class Job implements Comparable<Job> {
 	public Job(int milliseconds) {
 		interval = 0;
 		offset = 0;
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.MILLISECOND, milliseconds);
-		nextTime = c.getTime();
+		next_time = System.currentTimeMillis() + milliseconds;
 	}
 
 	/** Create a one-shot job to schedule immediately */
@@ -102,13 +98,13 @@ abstract public class Job implements Comparable<Job> {
 
 	/** Get the delay time before performing the job, in milliseconds */
 	public long delay() {
-		return nextTime.getTime() - System.currentTimeMillis();
+		return next_time - System.currentTimeMillis();
 	}
 
 	/** Compute the next time this job will be scheduled.  Warning: the
 	 * sort order for the Comparable interface will change. */
 	public void computeNextTime() {
-		nextTime.setTime(computePastTime() + interval);
+		next_time = computePastTime() + interval;
 	}
 
 	/** Compute the most recently past scheduled time */
@@ -145,7 +141,7 @@ abstract public class Job implements Comparable<Job> {
 
 	/** Compare this job with another one */
 	public int compareTo(Job other) {
-		long c = nextTime.compareTo(other.nextTime);
+		long c = next_time - other.next_time;
 		if(c == 0)
 			c = interval - other.interval;
 		if(c == 0)
