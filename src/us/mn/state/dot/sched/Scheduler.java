@@ -66,29 +66,6 @@ public final class Scheduler extends Thread {
 		start();
 	}
 
-	/** Get the next job on the "todo" list */
-	protected synchronized Job firstJob() throws InterruptedException {
-		while(todo.isEmpty()) {
-			wait();
-		}
-		return todo.first();
-	}
-
-	/** Get the next job for the scheduler to perform */
-	protected synchronized Job nextJob() throws InterruptedException {
-		Job job = firstJob();
-		long delay = job.nextTime.getTime() -
-			System.currentTimeMillis();
-		while(delay > 0) {
-			wait(delay);
-			job = firstJob();
-			delay = job.nextTime.getTime() -
-				System.currentTimeMillis();
-		}
-		todo.remove(job);
-		return job;
-	}
-
 	/** Process all scheduled jobs */
 	public void run() {
 		try {
@@ -102,13 +79,37 @@ public final class Scheduler extends Thread {
 
 	/** Perform jobs as they are scheduled */
 	protected void performJobs() throws InterruptedException {
-		Job job = nextJob();
+		Job job = waitJob();
 		while(!isInterrupted()) {
 			performJob(job);
 			if(job.isRepeating())
 				todo.add(job);
-			job = nextJob();
+			job = waitJob();
 		}
+	}
+
+	/** Wait until the next job needs to be performed.
+	 * @return Job to be performed. */
+	protected synchronized Job waitJob() throws InterruptedException {
+		Job job = nextJob();
+		long delay = job.nextTime.getTime() -
+			System.currentTimeMillis();
+		while(delay > 0) {
+			wait(delay);
+			job = nextJob();
+			delay = job.nextTime.getTime() -
+				System.currentTimeMillis();
+		}
+		todo.remove(job);
+		return job;
+	}
+
+	/** Get the next job on the "todo" list */
+	protected synchronized Job nextJob() throws InterruptedException {
+		while(todo.isEmpty()) {
+			wait();
+		}
+		return todo.first();
 	}
 
 	/** Perform a job */
