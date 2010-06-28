@@ -109,8 +109,9 @@ abstract public class Job implements Comparable<Job> {
 	protected long computePastTime() {
 		Calendar c = Calendar.getInstance();
 		long now = c.getTime().getTime();
-		// FIXME: need to figure out and document why ZONE_OFFSET and
-		// DST_OFFSET are needed here ...
+		// We need to adjust the offset time by the time zone offset
+		// and the DST offset so that daily jobs are performed at the
+		// proper hour during DST changes.
 		long off = offset - c.get(Calendar.ZONE_OFFSET) -
 			c.get(Calendar.DST_OFFSET);
 		return (now - off) / interval * interval + off;
