@@ -58,8 +58,10 @@ public class Completer {
 	/** Reset the state of the completer */
 	public synchronized void reset(Calendar s) {
 		if(ready && !completed) {
-			if(tasks.size() > 0)
+			if(tasks.size() > 0) {
 				debug("incomplete");
+				debugTasks();
+			}
 			doComplete();
 		}
 		stamp = s;
@@ -121,5 +123,11 @@ public class Completer {
 	protected void debug(String status) {
 		System.err.println(new Date().toString() + " " + name + " " +
 			status + ": " + tasks.size());
+	}
+
+	/** Debug the tasks */
+	protected void debugTasks() {
+		for(String t: tasks)
+			System.err.println("\ttask: " + t);
 	}
 }
