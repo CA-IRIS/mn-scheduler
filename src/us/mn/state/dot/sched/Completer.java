@@ -56,10 +56,15 @@ public class Completer {
 	}
 
 	/** Reset the state of the completer */
-	public void reset(Calendar s) {
+	public synchronized void reset(Calendar s) {
+		if(ready && !completed) {
+			if(tasks.size() > 0)
+				debug("incomplete");
+			doComplete();
+		}
 		stamp = s;
 		ready = false;
-		checked = false;
+		completed = false;
 	}
 
 	/** Flag to determine whether the completer is ready to test */
@@ -69,17 +74,13 @@ public class Completer {
 	public synchronized void makeReady() {
 		assert ready == false;
 		ready = true;
-		if(isComplete())
-			done();
 	}
+
+	/** Flag to determine whether the completer has completed since reset */
+	protected boolean completed = false;
 
 	/** Set of all tasks to be completed */
 	protected final HashSet<String> tasks = new HashSet<String>();
-
-	/** Test if all the tasks are complete */
-	protected synchronized boolean isComplete() {
-		return ready && tasks.isEmpty();
-	}
 
 	/** Register a task for the completer to wait for.
 	 * @param key Task key.
@@ -98,33 +99,22 @@ public class Completer {
 	public synchronized boolean completeTask(String key) {
 		boolean t = tasks.remove(key);
 		if(t) {
-			if(isComplete())
-				done();
+			if(shouldComplete())
+				doComplete();
 		} else
 			debug("unknown task: " + key);
 		return t;
 	}
 
-	/** Done with the completer */
-	protected void done() {
-		if(checked)
-			debug("complete");
-		scheduler.addJob(job);
+	/** Test if the compltion job should be performed */
+	protected boolean shouldComplete() {
+		return ready && tasks.isEmpty() && !completed;
 	}
 
-	/** Flag to determine whether completion has been checked yet */
-	protected boolean checked = false;
-
-	/** Check if all the tasks are complete */
-	public boolean checkComplete() {
-		checked = true;
-		if(ready) {
-			boolean c = isComplete();
-			if(!c)
-				debug("incomplete");
-			return c;
-		} else
-			return true;
+	/** Perform the completion job */
+	protected void doComplete() {
+		scheduler.addJob(job);
+		completed = true;
 	}
 
 	/** Debug the completer */
