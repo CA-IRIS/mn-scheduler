@@ -16,6 +16,7 @@ package us.mn.state.dot.sched;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 
 /**
  * Completer keeps track of a set of "tasks", which may be performed on any
@@ -59,8 +60,6 @@ public class Completer {
 		stamp = s;
 		ready = false;
 		checked = false;
-		total = 0;
-		complete = 0;
 	}
 
 	/** Flag to determine whether the completer is ready to test */
@@ -74,36 +73,36 @@ public class Completer {
 			done();
 	}
 
-	/** Flag to determine whether completion has been checked yet */
-	protected boolean checked = false;
-
-	/** Total count of tasks for this completer */
-	protected int total = 0;
-
-	/** Count of completed tasks */
-	protected int complete = 0;
+	/** Set of all tasks to be completed */
+	protected final HashSet<String> tasks = new HashSet<String>();
 
 	/** Test if all the tasks are complete */
 	protected synchronized boolean isComplete() {
-		return ready && (total <= complete);
+		return ready && tasks.isEmpty();
 	}
 
-	/** Move the completion counter up */
-	public synchronized void up() {
+	/** Register a task for the completer to wait for.
+	 * @param key Task key.
+	 * @return True if the task did not already exist. */
+	public synchronized boolean beginTask(String key) {
 		assert ready == false;
-		total++;
+		boolean t = tasks.add(key);
+		if(!t)
+			debug("task esists: " + key);
+		return t;
 	}
 
-	/** Move the completion counter down */
-	public synchronized void down() {
-		if(isComplete()) {
-			System.err.println(name + " CORRUPT @ " + new Date());
-			System.err.println("Total tasks: " + total);
-			return;
-		}
-		complete++;
-		if(isComplete())
-			done();
+	/** Complete a previously registered task.
+	 * @param key Task key.
+	 * @return True if the task existed. */
+	public synchronized boolean completeTask(String key) {
+		boolean t = tasks.remove(key);
+		if(t) {
+			if(isComplete())
+				done();
+		} else
+			debug("unknown task: " + key);
+		return t;
 	}
 
 	/** Done with the completer */
@@ -113,20 +112,24 @@ public class Completer {
 		scheduler.addJob(job);
 	}
 
+	/** Flag to determine whether completion has been checked yet */
+	protected boolean checked = false;
+
 	/** Check if all the tasks are complete */
 	public boolean checkComplete() {
-		if(!ready)
-			return true;
 		checked = true;
-		boolean c = isComplete();
-		if(!c)
-			debug("incomplete");
-		return c;
+		if(ready) {
+			boolean c = isComplete();
+			if(!c)
+				debug("incomplete");
+			return c;
+		} else
+			return true;
 	}
 
 	/** Debug the completer */
 	protected void debug(String status) {
 		System.err.println(new Date().toString() + " " + name + " " +
-			status + ": " + complete + ", total: " + total);
+			status + ": " + tasks.size());
 	}
 }
