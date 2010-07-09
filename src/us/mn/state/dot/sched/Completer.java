@@ -68,7 +68,7 @@ public class Completer {
 
 	/** Make completer ready to test */
 	public synchronized void makeReady() {
-		// assert ready == false;
+		assert ready == false;
 		ready = true;
 		if(isComplete())
 			done();
@@ -90,13 +90,12 @@ public class Completer {
 
 	/** Move the completion counter up */
 	public synchronized void up() {
-		// assert ready == false;
+		assert ready == false;
 		total++;
 	}
 
 	/** Move the completion counter down */
 	public synchronized void down() {
-		// assert !isComplete();
 		if(isComplete()) {
 			System.err.println(name + " CORRUPT @ " + new Date());
 			System.err.println("Total tasks: " + total);
@@ -110,7 +109,7 @@ public class Completer {
 	/** Done with the completer */
 	protected void done() {
 		if(checked)
-			System.err.println(name + " complete @ " + new Date());
+			debug("complete");
 		scheduler.addJob(job);
 	}
 
@@ -119,10 +118,15 @@ public class Completer {
 		if(!ready)
 			return true;
 		checked = true;
-		if(isComplete())
-			return true;
-		System.err.println(name + " incomplete: " +
-			complete + " < " + total + " @ " + new Date());
-		return false;
+		boolean c = isComplete();
+		if(!c)
+			debug("incomplete");
+		return c;
+	}
+
+	/** Debug the completer */
+	protected void debug(String status) {
+		System.err.println(new Date().toString() + " " + name + " " +
+			status + ": " + complete + ", total: " + total);
 	}
 }
