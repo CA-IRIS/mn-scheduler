@@ -62,7 +62,7 @@ public final class Scheduler {
 	}
 
 	/** Create a new job scheduler */
-	public Scheduler(final String name, ExceptionHandler h) {
+	public Scheduler(String name, ExceptionHandler h) {
 		handler = h;
 		thread = new Thread(name) {
 			public void run() {
