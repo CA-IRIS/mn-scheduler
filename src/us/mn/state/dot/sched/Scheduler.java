@@ -22,7 +22,7 @@ import java.util.TreeSet;
  *
  * @author Douglas Lau
  */
-public final class Scheduler extends Thread {
+public final class Scheduler {
 
 	/** Default exception handler */
 	static protected ExceptionHandler HANDLER;
@@ -45,6 +45,9 @@ public final class Scheduler extends Thread {
 			e.printStackTrace();
 	}
 
+	/** Thread for running jobs */
+	protected final Thread thread;
+
 	/** Set of scheduled jobs to do */
 	protected final TreeSet<Job> todo = new TreeSet<Job>();
 
@@ -59,28 +62,26 @@ public final class Scheduler extends Thread {
 	}
 
 	/** Create a new job scheduler */
-	public Scheduler(String name, ExceptionHandler h) {
-		super(name);
+	public Scheduler(final String name, ExceptionHandler h) {
 		handler = h;
-		setDaemon(true);
-		start();
-	}
-
-	/** Process all scheduled jobs */
-	public void run() {
-		try {
-			performJobs();
-		}
-		catch(InterruptedException e) {
-			handleException(e);
-		}
-		System.err.println("STOPPING THREAD: " + getName());
+		thread = new Thread(name) {
+			public void run() {
+				try {
+					performJobs();
+				}
+				catch(InterruptedException e) {
+					handleException(e);
+				}
+			}
+		};
+		thread.setDaemon(true);
+		thread.start();
 	}
 
 	/** Perform jobs as they are scheduled */
 	protected void performJobs() throws InterruptedException {
 		Job job = waitJob();
-		while(!isInterrupted()) {
+		while(!thread.isInterrupted()) {
 			performJob(job);
 			if(job.isRepeating()) {
 				job.computeNextTime();
