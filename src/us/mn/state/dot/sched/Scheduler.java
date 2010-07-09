@@ -143,4 +143,9 @@ public final class Scheduler {
 		todo.remove(job);
 		notify();
 	}
+
+	/** Test if the current thread is the scheduler thread */
+	public boolean isCurrentThread() {
+		return Thread.currentThread() == thread;
+	}
 }
