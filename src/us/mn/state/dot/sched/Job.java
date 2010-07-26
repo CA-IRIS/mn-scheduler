@@ -15,6 +15,7 @@
 package us.mn.state.dot.sched;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Job for the scheduler to perform.  When the scheduler is ready, the perform
@@ -83,7 +84,7 @@ abstract public class Job implements Comparable<Job> {
 	public Job(int milliseconds) {
 		interval = 0;
 		offset = 0;
-		next_time = System.currentTimeMillis() + milliseconds;
+		next_time = TimeSteward.currentTimeMillis() + milliseconds;
 	}
 
 	/** Create a one-shot job to schedule immediately */
@@ -98,7 +99,7 @@ abstract public class Job implements Comparable<Job> {
 
 	/** Get the delay time before performing the job, in milliseconds */
 	public long delay() {
-		return next_time - System.currentTimeMillis();
+		return next_time - TimeSteward.currentTimeMillis();
 	}
 
 	/** Compute the next time this job will be scheduled.  Warning: the
@@ -109,13 +110,11 @@ abstract public class Job implements Comparable<Job> {
 
 	/** Compute the most recently past scheduled time */
 	protected long computePastTime() {
-		Calendar c = Calendar.getInstance();
-		long now = c.getTime().getTime();
+		long now = TimeSteward.currentTimeMillis();
 		// We need to adjust the offset time by the time zone offset
 		// and the DST offset so that daily jobs are performed at the
 		// proper hour during DST changes.
-		long off = offset - c.get(Calendar.ZONE_OFFSET) -
-			c.get(Calendar.DST_OFFSET);
+		long off = offset - TimeZone.getDefault().getOffset(now);
 		return (now - off) / interval * interval + off;
 	}
 
@@ -159,6 +158,7 @@ abstract public class Job implements Comparable<Job> {
 	public synchronized void waitForCompletion() {
 		while(n_complete == 0) {
 			try {
+				// FIXME: use TimeSteward replacement
 				wait(1000);
 			}
 			catch(InterruptedException e) {

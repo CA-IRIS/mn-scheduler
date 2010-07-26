@@ -121,8 +121,8 @@ public class Completer {
 
 	/** Debug the completer */
 	protected void debug(String status) {
-		System.err.println(new Date().toString() + " " + name + " " +
-			status + ": " + tasks.size());
+		System.err.println(TimeSteward.getDateInstance().toString() +
+			" " + name + " " + status + ": " + tasks.size());
 	}
 
 	/** Debug the tasks */

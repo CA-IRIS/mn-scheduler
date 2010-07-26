@@ -96,8 +96,10 @@ public class DebugLog {
 	/** Log a message in the debug log file */
 	public synchronized void log(String m) {
 		try {
-			if(canWrite())
-				pw.println(new Date().toString() + " " + m);
+			if(canWrite()) {
+				Date d = TimeSteward.getDateInstance();
+				pw.println(d.toString() + " " + m);
+			}
 		}
 		catch(IOException e) {
 			handleException(e);

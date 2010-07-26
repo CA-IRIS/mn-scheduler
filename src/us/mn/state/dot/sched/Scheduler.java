@@ -97,6 +97,7 @@ public final class Scheduler {
 		Job job = nextJob();
 		long delay = job.delay();
 		while(delay > 0) {
+			// FIXME: use TimeSteward replacement
 			wait(delay);
 			// We need to check the next job here in case the job
 			// was removed or a new job was added while we were
