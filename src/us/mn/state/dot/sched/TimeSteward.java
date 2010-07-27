@@ -79,6 +79,11 @@ public final class TimeSteward {
 		       cal.get(Calendar.MINUTE);
 	}
 
+	/** Get the current second-of-day as an int */
+	static public int currentSecondOfDayInt() {
+		return secondOfDayInt(currentTimeMillis());
+	}
+
 	/** Get the second-of-day as an int */
 	static public int secondOfDayInt(long time) {
 		Calendar cal = Calendar.getInstance();
