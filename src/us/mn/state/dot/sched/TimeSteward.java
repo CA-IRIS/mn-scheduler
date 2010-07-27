@@ -14,8 +14,10 @@
  */
 package us.mn.state.dot.sched;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * The time steward provides static methods dealing with time sources.
@@ -68,5 +70,58 @@ public final class TimeSteward {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(currentTimeMillis());
 		return cal;
+	}
+
+	/** Get the current minute-of-day as an int */
+	static public int currentMinuteOfDayInt() {
+		Calendar cal = getCalendarInstance();
+		return cal.get(Calendar.HOUR_OF_DAY) * 60 +
+		       cal.get(Calendar.MINUTE);
+	}
+
+	/** Get the second-of-day as an int */
+	static public int secondOfDayInt(long time) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(time);
+		return cal.get(Calendar.HOUR_OF_DAY) * 3600 +
+		       cal.get(Calendar.MINUTE) * 60 +
+		       cal.get(Calendar.SECOND);
+	}
+
+	/** Get the current date as a short YYYYMMDD string */
+	static public String currentDateShortString() {
+		return dateShortString(currentTimeMillis());
+	}
+
+	/** Formatter for short dates (8-character) */
+	static protected final SimpleDateFormat DATE_SHORT =
+		createDateFormat("yyyyMMdd", false);
+
+	/** Get the date as a short YYYYMMDD string */
+	static public String dateShortString(long date) {
+		synchronized(DATE_SHORT) {
+			return DATE_SHORT.format(new Date(date));
+		}
+	}
+
+	/** Format a date to a string.
+	 * @param format Format specifier.
+	 * @param local Use local time or UTC.
+	 * @param date Date to format.
+	 * @return Formatted string. */
+	static private SimpleDateFormat createDateFormat(String format,
+		boolean local)
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		sdf.setTimeZone(getTimeZone(local));
+		return sdf;
+	}
+
+	/** Get a time zone */
+	static private TimeZone getTimeZone(boolean local) {
+		if(local)
+			return TimeZone.getDefault();
+		else
+			return TimeZone.getTimeZone("UTC");
 	}
 }
