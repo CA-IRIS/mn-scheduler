@@ -104,6 +104,17 @@ public final class TimeSteward {
 		return sdf.format(new Date(date));
 	}
 
+	/** Get the current local time as short string */
+	static public String currentTimeShortString() {
+		return timeShortString(currentTimeMillis());
+	}
+
+	/** Get the local time as short HH:mm:ss string */
+	static public String timeShortString(long date) {
+		SimpleDateFormat sdf = createDateFormat("HH:mm:ss", true);
+		return sdf.format(new Date(date));
+	}
+
 	/** Format a date to a string.
 	 * @param format Format specifier.
 	 * @param local Use local time or UTC.
