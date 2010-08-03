@@ -98,15 +98,10 @@ public final class TimeSteward {
 		return dateShortString(currentTimeMillis());
 	}
 
-	/** Formatter for short dates (8-character) */
-	static protected final SimpleDateFormat DATE_SHORT =
-		createDateFormat("yyyyMMdd", true);
-
 	/** Get the local date as a short YYYYMMDD string */
 	static public String dateShortString(long date) {
-		synchronized(DATE_SHORT) {
-			return DATE_SHORT.format(new Date(date));
-		}
+		SimpleDateFormat sdf = createDateFormat("yyyyMMdd", true);
+		return sdf.format(new Date(date));
 	}
 
 	/** Format a date to a string.
