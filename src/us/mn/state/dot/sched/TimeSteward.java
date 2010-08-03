@@ -72,19 +72,19 @@ public final class TimeSteward {
 		return cal;
 	}
 
-	/** Get the current minute-of-day as an int */
+	/** Get the current local minute-of-day as an int */
 	static public int currentMinuteOfDayInt() {
 		Calendar cal = getCalendarInstance();
 		return cal.get(Calendar.HOUR_OF_DAY) * 60 +
 		       cal.get(Calendar.MINUTE);
 	}
 
-	/** Get the current second-of-day as an int */
+	/** Get the current local second-of-day as an int */
 	static public int currentSecondOfDayInt() {
 		return secondOfDayInt(currentTimeMillis());
 	}
 
-	/** Get the second-of-day as an int */
+	/** Get the local second-of-day as an int */
 	static public int secondOfDayInt(long time) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(time);
@@ -93,16 +93,16 @@ public final class TimeSteward {
 		       cal.get(Calendar.SECOND);
 	}
 
-	/** Get the current date as a short YYYYMMDD string */
+	/** Get the current local date as a short YYYYMMDD string */
 	static public String currentDateShortString() {
 		return dateShortString(currentTimeMillis());
 	}
 
 	/** Formatter for short dates (8-character) */
 	static protected final SimpleDateFormat DATE_SHORT =
-		createDateFormat("yyyyMMdd", false);
+		createDateFormat("yyyyMMdd", true);
 
-	/** Get the date as a short YYYYMMDD string */
+	/** Get the local date as a short YYYYMMDD string */
 	static public String dateShortString(long date) {
 		synchronized(DATE_SHORT) {
 			return DATE_SHORT.format(new Date(date));
