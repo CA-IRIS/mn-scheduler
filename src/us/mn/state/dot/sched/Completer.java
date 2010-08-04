@@ -14,8 +14,6 @@
  */
 package us.mn.state.dot.sched;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 
 /**
@@ -37,10 +35,10 @@ public class Completer {
 	protected final Job job;
 
 	/** Time stamp of current task */
-	protected Calendar stamp;
+	protected long stamp;
 
 	/** Get the completer time stamp */
-	public Calendar getStamp() {
+	public long getStamp() {
 		return stamp;
 	}
 
@@ -56,7 +54,7 @@ public class Completer {
 	}
 
 	/** Reset the state of the completer */
-	public synchronized void reset(Calendar s) {
+	public synchronized void reset() {
 		if(ready && !completed) {
 			if(tasks.size() > 0) {
 				debug("incomplete");
@@ -64,7 +62,7 @@ public class Completer {
 			}
 			doComplete();
 		}
-		stamp = s;
+		stamp = TimeSteward.currentTimeMillis();
 		ready = false;
 		completed = false;
 	}
