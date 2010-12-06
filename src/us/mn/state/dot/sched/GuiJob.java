@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2005-2008  Minnesota Department of Transportation
+ * Copyright (C) 2005-2010  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,16 +58,12 @@ abstract public class GuiJob extends AbstractJob {
 
 	/** Start the job */
 	protected void start() {
-		if(component != null)
-			component.setEnabled(false);
 		if(form != null)
 			form.setCursor(WAIT_CURSOR);
 	}
 
 	/** Complete the job */
 	public void complete() {
-		if(component != null)
-			component.setEnabled(true);
 		if(form != null)
 			form.setCursor(null);
 	}
