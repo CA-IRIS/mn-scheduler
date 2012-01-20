@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2010  Minnesota Department of Transportation
+ * Copyright (C) 2010-2012  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,5 +24,10 @@ public class SystemTimeSource implements TimeSource {
 	/** Get the current time */
 	public long currentTimeMillis() {
 		return System.currentTimeMillis();
+	}
+
+	/** Sleep for the specified number of milliseconds */
+	public void sleep(long millis) throws InterruptedException {
+		Thread.sleep(millis);
 	}
 }

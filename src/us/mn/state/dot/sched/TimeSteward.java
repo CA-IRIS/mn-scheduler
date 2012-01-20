@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2010  Minnesota Department of Transportation
+ * Copyright (C) 2010-2012  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,11 @@ public final class TimeSteward {
 	/** Get the current time */
 	static public long currentTimeMillis() {
 		return source.currentTimeMillis();
+	}
+
+	/** Sleep for the specified number of milliseconds */
+	static public void sleep(long ms) throws InterruptedException {
+		source.sleep(ms);
 	}
 
 	/** Get a date instance from the time source */
