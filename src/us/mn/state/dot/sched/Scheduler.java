@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2010  Minnesota Department of Transportation
+ * Copyright (C) 2000-2012  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,8 +97,7 @@ public final class Scheduler {
 		Job job = nextJob();
 		long delay = job.delay();
 		while(delay > 0) {
-			// FIXME: use TimeSteward replacement
-			wait(delay);
+			TimeSteward.wait(this, delay);
 			// We need to check the next job here in case the job
 			// was removed or a new job was added while we were
 			// waiting

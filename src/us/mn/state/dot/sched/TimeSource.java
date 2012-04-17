@@ -26,4 +26,7 @@ public interface TimeSource {
 
 	/** Sleep for the specified number of milliseconds */
 	void sleep(long millis) throws InterruptedException;
+
+	/** Wait until an object is notified, or timeout expires */
+	void wait(Object monitor, long ms) throws InterruptedException;
 }

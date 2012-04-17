@@ -65,6 +65,13 @@ public final class TimeSteward {
 		source.sleep(ms);
 	}
 
+	/** Wait until an object is notified, or timeout expires */
+	static public void wait(Object monitor, long ms)
+		throws InterruptedException
+	{
+		source.wait(monitor, ms);
+	}
+
 	/** Get a date instance from the time source */
 	static public Date getDateInstance() {
 		return new Date(currentTimeMillis());

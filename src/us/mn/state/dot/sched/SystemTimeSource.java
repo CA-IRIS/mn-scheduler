@@ -30,4 +30,9 @@ public class SystemTimeSource implements TimeSource {
 	public void sleep(long millis) throws InterruptedException {
 		Thread.sleep(millis);
 	}
+
+	/** Wait until an object is notified, or timeout expires */
+	public void wait(Object monitor, long ms) throws InterruptedException {
+		monitor.wait(ms);
+	}
 }
