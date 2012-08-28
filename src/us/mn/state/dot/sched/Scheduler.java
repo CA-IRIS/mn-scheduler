@@ -51,6 +51,9 @@ public final class Scheduler {
 	/** Set of scheduled jobs to do */
 	protected final TreeSet<Job> todo = new TreeSet<Job>();
 
+	/** Set of jobs to remove from scheduler */
+	private final TreeSet<Job> toremove = new TreeSet<Job>();
+
 	/** Create a new job scheduler */
 	public Scheduler() {
 		this("Job Scheduler");
@@ -87,6 +90,7 @@ public final class Scheduler {
 				job.computeNextTime();
 				todo.add(job);
 			}
+			removeJobs();
 			job = waitJob();
 		}
 	}
@@ -140,8 +144,17 @@ public final class Scheduler {
 
 	/** Remove a job from this scheduler */
 	public synchronized void removeJob(Job job) {
-		todo.remove(job);
+		toremove.add(job);
 		notify();
+	}
+
+	/** Remove jobs which need to be removed.  This needs to be done on the
+	 * scheduler thread in case the job is being performed while removeJob
+	 * is called. */
+	private synchronized void removeJobs() {
+		for(Job job: toremove)
+			todo.remove(job);
+		toremove.clear();
 	}
 
 	/** Test if the current thread is the scheduler thread */
