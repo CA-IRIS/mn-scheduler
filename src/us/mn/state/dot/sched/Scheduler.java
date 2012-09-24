@@ -41,8 +41,10 @@ public final class Scheduler {
 			handler.handle(e);
 		else if(HANDLER != null)
 			HANDLER.handle(e);
-		else
+		else {
+			System.err.println("Scheduler: " + thread.getName());
 			e.printStackTrace();
+		}
 	}
 
 	/** Thread for running jobs */
