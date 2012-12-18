@@ -110,6 +110,15 @@ public final class TimeSteward {
 		return dateShortString(currentTimeMillis());
 	}
 
+	/** Get current date and time as string.
+	 * @param local True for local time, false for UTC.
+	 */
+	static public String currentDateTimeString(boolean local) {
+		SimpleDateFormat sdf = createDateFormat("yyyy-MM-dd HH:mm:ss",
+			local);
+		return sdf.format(new Date(currentTimeMillis()));
+	}
+
 	/** Get the local date as a short YYYYMMDD string */
 	static public String dateShortString(long date) {
 		SimpleDateFormat sdf = createDateFormat("yyyyMMdd", true);
