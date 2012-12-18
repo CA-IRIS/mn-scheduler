@@ -165,4 +165,9 @@ abstract public class Job implements Comparable<Job> {
 			}
 		}
 	}
+
+	/** Get the name of the job */
+	public String getName() {
+		return getClass().getSimpleName();
+	}
 }

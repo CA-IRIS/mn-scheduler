@@ -25,7 +25,14 @@ import java.util.TreeSet;
 public final class Scheduler {
 
 	/** Default exception handler */
-	static protected ExceptionHandler HANDLER;
+	static private ExceptionHandler HANDLER = new ExceptionHandler() {
+		public boolean handle(Exception e) {
+			System.err.println("Scheduler: " +
+				Thread.currentThread().getName());
+			e.printStackTrace();
+			return true;
+		}
+	};
 
 	/** Set the default exception handler */
 	static public void setHandler(ExceptionHandler h) {
@@ -33,32 +40,31 @@ public final class Scheduler {
 	}
 
 	/** Exception handler */
-	protected final ExceptionHandler handler;
+	private final ExceptionHandler handler;
 
 	/** Handle an exception */
-	protected void handleException(Exception e) {
+	private void handleException(Exception e) {
 		if(handler != null)
 			handler.handle(e);
-		else if(HANDLER != null)
+		else
 			HANDLER.handle(e);
-		else {
-			System.err.println("Scheduler: " + thread.getName());
-			e.printStackTrace();
-		}
 	}
 
 	/** Thread for running jobs */
-	protected final Thread thread;
+	private final Thread thread;
+
+	/** Debug log for scheduled jobs */
+	private final DebugLog slog;
 
 	/** Set of scheduled jobs to do */
-	protected final TreeSet<Job> todo = new TreeSet<Job>();
+	private final TreeSet<Job> todo = new TreeSet<Job>();
 
 	/** Set of jobs to remove from scheduler */
 	private final TreeSet<Job> toremove = new TreeSet<Job>();
 
 	/** Create a new job scheduler */
 	public Scheduler() {
-		this("Job Scheduler");
+		this("sched");
 	}
 
 	/** Create a new job scheduler */
@@ -68,6 +74,7 @@ public final class Scheduler {
 
 	/** Create a new job scheduler */
 	public Scheduler(String name, ExceptionHandler h) {
+		slog = new DebugLog(name, h);
 		handler = h;
 		thread = new Thread(name) {
 			public void run() {
@@ -84,7 +91,7 @@ public final class Scheduler {
 	}
 
 	/** Perform jobs as they are scheduled */
-	protected void performJobs() throws InterruptedException {
+	private void performJobs() throws InterruptedException {
 		Job job = waitJob();
 		while(!thread.isInterrupted()) {
 			performJob(job);
@@ -99,7 +106,7 @@ public final class Scheduler {
 
 	/** Wait until the next job needs to be performed.
 	 * @return Job to be performed. */
-	protected synchronized Job waitJob() throws InterruptedException {
+	private synchronized Job waitJob() throws InterruptedException {
 		Job job = nextJob();
 		long delay = job.delay();
 		while(delay > 0) {
@@ -115,7 +122,7 @@ public final class Scheduler {
 	}
 
 	/** Get the next job on the "todo" list */
-	protected synchronized Job nextJob() throws InterruptedException {
+	private synchronized Job nextJob() throws InterruptedException {
 		while(todo.isEmpty()) {
 			wait();
 		}
@@ -123,8 +130,9 @@ public final class Scheduler {
 	}
 
 	/** Perform a job */
-	protected void performJob(Job job) {
+	private void performJob(Job job) {
 		try {
+			slog.log("Starting " + job.getName());
 			job.performTask();
 		}
 		catch(Exception e) {
@@ -135,6 +143,9 @@ public final class Scheduler {
 			e.printStackTrace();
 			System.err.println("FATAL: RESTARTING");
 			System.exit(1);
+		}
+		finally {
+			slog.log("Finished " + job.getName());
 		}
 	}
 
