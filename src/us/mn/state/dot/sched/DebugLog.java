@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2002-2010  Minnesota Department of Transportation
+ * Copyright (C) 2002-2012  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,8 @@
  */
 package us.mn.state.dot.sched;
 
-import java.util.Date;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.BufferedWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
 
@@ -28,56 +26,80 @@ import java.io.IOException;
  *
  * @author Douglas Lau
  */
-public class DebugLog {
+public final class DebugLog {
+
+	/** Path to store log files */
+	static private File PATH = new File(".");
+
+	/** Initial message when creating log file */
+	static private String MESSAGE = "Created DebugLog";
 
 	/** Default exception handler */
-	static protected ExceptionHandler HANDLER;
+	static private ExceptionHandler HANDLER = new ExceptionHandler() {
+		public boolean handle(Exception e) {
+			e.printStackTrace();
+			return true;
+		}
+	};
 
-	/** Set the default exception handler */
-	static public void setHandler(ExceptionHandler h) {
+	/** Initialize the debug log mechanism.
+	 * @param p File path to store log files.
+	 * @param m Initial message when creating log file.
+	 * @param h Default exception handler. */
+	static public void init(File p, String m, ExceptionHandler h) {
+		if(p.isDirectory())
+			PATH = p;
+		MESSAGE = m;
 		HANDLER = h;
 	}
 
+	/** Initialize the debug log mechanism.
+	 * @param p File path to store log files.
+	 * @param m Initial message when creating log file. */
+	static public void init(File p, String m) {
+		init(p, m, HANDLER);
+	}
+
 	/** Exception handler */
-	protected final ExceptionHandler handler;
+	private final ExceptionHandler handler;
 
 	/** Handle an exception */
-	protected void handleException(Exception e) {
+	private void handleException(Exception e) {
 		if(handler != null)
 			handler.handle(e);
-		else if(HANDLER != null)
-			HANDLER.handle(e);
 		else
-			e.printStackTrace();
+			HANDLER.handle(e);
 	}
 
 	/** Create a new debug log */
-	public DebugLog(String name) {
-		this(name, null);
+	public DebugLog(String fn) {
+		this(fn, null);
 	}
 
 	/** Create a new debug log */
-	public DebugLog(String name, ExceptionHandler h) {
-		file = new File(name);
+	public DebugLog(String fn, ExceptionHandler h) {
+		name = fn;
 		handler = h;
+		log(MESSAGE);
 	}
 
-	/** File to log debugging information */
-	protected final File file;
+	/** Name of log file */
+	private final String name;
+
+	/** Get the logging file */
+	public File getFile() {
+		return new File(PATH, name);
+	}
 
 	/** Debug log print writer */
-	protected PrintWriter pw = null;
+	private PrintWriter pw = null;
 
 	/** Check if we can write to the log file */
-	protected synchronized boolean canWrite() throws IOException {
+	private synchronized boolean canWrite(File file) throws IOException {
 		boolean w = file.canWrite();
-		if(!w && pw != null) {
+		if((!w && pw != null) || file.length() == 0) {
 			pw.close();
 			pw = null;
-		}
-		if(w && pw == null) {
-			pw = new PrintWriter(new BufferedWriter(
-				new FileWriter(file, true)), true);
 		}
 		return w;
 	}
@@ -85,7 +107,7 @@ public class DebugLog {
 	/** Check if the debug log is open for writing */
 	public boolean isOpen() {
 		try {
-			return canWrite();
+			return canWrite(getFile());
 		}
 		catch(IOException e) {
 			handleException(e);
@@ -96,13 +118,27 @@ public class DebugLog {
 	/** Log a message in the debug log file */
 	public synchronized void log(String m) {
 		try {
-			if(canWrite()) {
-				Date d = TimeSteward.getDateInstance();
-				pw.println(d.toString() + " " + m);
-			}
+			File file = getFile();
+			if(canWrite(file))
+				log(file, m);
 		}
 		catch(IOException e) {
 			handleException(e);
 		}
+	}
+
+	/** Write a message in the debug log file */
+	private void log(File file, String m) throws IOException {
+		if(pw == null) {
+			pw = new PrintWriter(new FileWriter(file, true));
+			log(pw, "DebugLog: " + name);
+		}
+		log(pw, m);
+		pw.flush();
+	}
+
+	/** Write a log message to a print writer */
+	private void log(PrintWriter pw, String m) {
+		pw.println(TimeSteward.currentDateTimeString(true) + " " + m);
 	}
 }
