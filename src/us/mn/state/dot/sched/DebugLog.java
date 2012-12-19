@@ -97,7 +97,7 @@ public final class DebugLog {
 	/** Check if we can write to the log file */
 	private synchronized boolean canWrite(File file) throws IOException {
 		boolean w = file.canWrite();
-		if((!w && bw != null) || file.length() == 0) {
+		if(bw != null && (!w || file.length() == 0)) {
 			bw.close();
 			bw = null;
 		}
