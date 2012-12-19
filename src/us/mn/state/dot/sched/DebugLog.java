@@ -14,9 +14,9 @@
  */
 package us.mn.state.dot.sched;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.io.IOException;
 
 /**
@@ -91,15 +91,15 @@ public final class DebugLog {
 		return new File(PATH, name);
 	}
 
-	/** Debug log print writer */
-	private PrintWriter pw = null;
+	/** Debug log buffered writer */
+	private BufferedWriter bw = null;
 
 	/** Check if we can write to the log file */
 	private synchronized boolean canWrite(File file) throws IOException {
 		boolean w = file.canWrite();
-		if((!w && pw != null) || file.length() == 0) {
-			pw.close();
-			pw = null;
+		if((!w && bw != null) || file.length() == 0) {
+			bw.close();
+			bw = null;
 		}
 		return w;
 	}
@@ -129,16 +129,19 @@ public final class DebugLog {
 
 	/** Write a message in the debug log file */
 	private void log(File file, String m) throws IOException {
-		if(pw == null) {
-			pw = new PrintWriter(new FileWriter(file, true));
-			log(pw, "DebugLog: " + name);
+		if(bw == null) {
+			bw = new BufferedWriter(new FileWriter(file, true));
+			log(bw, "DebugLog: " + name);
 		}
-		log(pw, m);
-		pw.flush();
+		log(bw, m);
+		bw.flush();
 	}
 
-	/** Write a log message to a print writer */
-	private void log(PrintWriter pw, String m) {
-		pw.println(TimeSteward.currentDateTimeString(true) + " " + m);
+	/** Write a log message to a buffered writer */
+	private void log(BufferedWriter bw, String m) throws IOException {
+		bw.write(TimeSteward.currentDateTimeString(true));
+		bw.write(" ");
+		bw.write(m);
+		bw.newLine();
 	}
 }
