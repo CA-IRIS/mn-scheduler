@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2012  Minnesota Department of Transportation
+ * Copyright (C) 2000-2013  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +62,9 @@ public final class Scheduler {
 	/** Set of jobs to remove from scheduler */
 	private final TreeSet<Job> toremove = new TreeSet<Job>();
 
+	/** Flag to indicate disposing */
+	private boolean disposing = false;
+
 	/** Create a new job scheduler */
 	public Scheduler() {
 		this("sched");
@@ -82,7 +85,8 @@ public final class Scheduler {
 					performJobs();
 				}
 				catch(InterruptedException e) {
-					handleException(e);
+					if(!disposing)
+						handleException(e);
 				}
 			}
 		};
@@ -173,5 +177,11 @@ public final class Scheduler {
 	/** Test if the current thread is the scheduler thread */
 	public boolean isCurrentThread() {
 		return Thread.currentThread() == thread;
+	}
+
+	/** Dispose of the scheduler */
+	public void dispose() {
+		disposing = true;
+		thread.interrupt();
 	}
 }
