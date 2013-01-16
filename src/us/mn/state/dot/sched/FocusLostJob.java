@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2008  Minnesota Department of Transportation
+ * Copyright (C) 2008-2013  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,43 +16,30 @@ package us.mn.state.dot.sched;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import javax.swing.JComponent;
 
 /**
- * FocusJob is a simple extension/replacement for FocusListener
+ * FocusLostJob is a simple extension/replacement for FocusListener
  * which passes off a job to a scheduler.
  *
  * @author Douglas Lau
  */
-abstract public class FocusJob extends AbstractJob implements FocusListener {
+abstract public class FocusLostJob extends Job implements FocusListener {
 
-	/** Create a new focus job */
-	public FocusJob(JComponent c) {
-		c.addFocusListener(this);
+	/** Scheduler */
+	private final Scheduler sched;
+
+	/** Create a new focus lost job */
+	public FocusLostJob(Scheduler s) {
+		sched = s;
 	}
 
-	/** Most recent focus event */
-	protected FocusEvent event;
-
 	/** Focus gained (from FocusListener interface) */
-	public void focusGained(FocusEvent e) {
-		event = e;
-		addToScheduler();
+	@Override public void focusGained(FocusEvent e) {
+		// We only care about focus lost events
 	}
 
 	/** Focus lost (from FocusListener interface) */
-	public void focusLost(FocusEvent e) {
-		event = e;
-		addToScheduler();
-	}
-
-	/** Test if the focus was gained */
-	public boolean wasGained() {
-		return event.getID() == FocusEvent.FOCUS_GAINED;
-	}
-
-	/** Test if the focus was lost */
-	public boolean wasLost() {
-		return event.getID() == FocusEvent.FOCUS_LOST;
+	@Override public void focusLost(FocusEvent e) {
+		sched.addJob(this);
 	}
 }

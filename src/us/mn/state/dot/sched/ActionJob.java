@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2008  Minnesota Department of Transportation
+ * Copyright (C) 2000-2013  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,6 @@ package us.mn.state.dot.sched;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.AbstractButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 
 /**
  * ActionJob is a simple extension/replacement for ActionListener
@@ -26,35 +23,18 @@ import javax.swing.JComponent;
  *
  * @author Douglas Lau
  */
-abstract public class ActionJob extends GuiJob implements ActionListener {
+abstract public class ActionJob extends Job implements ActionListener {
 
-	/** Create a new action job */
-	public ActionJob(JComponent f, AbstractButton c) {
-		super(f, c);
-		c.addActionListener(this);
-	}
-
-	/** Create a new action job */
-	public ActionJob(JComponent f, JComboBox c) {
-		super(f, c);
-		c.addActionListener(this);
-	}
-
-	/** Create a new action job with no form */
-	public ActionJob(AbstractButton c) {
-		super(c);
-		c.addActionListener(this);
-	}
+	/** Scheduler */
+	private final Scheduler sched;
 
 	/** Create a new action job for an alternate scheduler */
-	public ActionJob(Scheduler s, AbstractButton c) {
-		super(s, c);
-		c.addActionListener(this);
+	public ActionJob(Scheduler s) {
+		sched = s;
 	}
 
 	/** Action performed (from ActionListener interface) */
-	public void actionPerformed(ActionEvent e) {
-		start();
-		addToScheduler();
+	@Override public void actionPerformed(ActionEvent e) {
+		sched.addJob(this);
 	}
 }

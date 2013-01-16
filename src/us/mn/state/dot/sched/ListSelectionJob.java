@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2005-2008  Minnesota Department of Transportation
+ * Copyright (C) 2005-2013  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  */
 package us.mn.state.dot.sched;
 
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -26,28 +23,20 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author Douglas Lau
  */
-abstract public class ListSelectionJob extends GuiJob
+abstract public class ListSelectionJob extends Job
 	implements ListSelectionListener
 {
-	/** Most recent event */
-	protected ListSelectionEvent event;
+	/** Scheduler */
+	private final Scheduler sched;
 
 	/** Create a new list selection job */
-	public ListSelectionJob(JComponent f, JList c) {
-		super(f, null);
-		c.addListSelectionListener(this);
-	}
-
-	/** Create a new list selection job */
-	public ListSelectionJob(JComponent f, ListSelectionModel m) {
-		super(f, null);
-		m.addListSelectionListener(this);
+	public ListSelectionJob(Scheduler s) {
+		sched = s;
 	}
 
 	/** List selection changed (from ListSelectionListener interface) */
-	public void valueChanged(ListSelectionEvent e) {
-		start();
-		event = e;
-		addToScheduler();
+	@Override public void valueChanged(ListSelectionEvent e) {
+		if(!e.getValueIsAdjusting())
+			sched.addJob(this);
 	}
 }

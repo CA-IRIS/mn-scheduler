@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2006-2009  Minnesota Department of Transportation
+ * Copyright (C) 2006-2013  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,6 @@
  */
 package us.mn.state.dot.sched;
 
-import javax.swing.AbstractButton;
-import javax.swing.JComponent;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -27,35 +23,18 @@ import javax.swing.event.ChangeListener;
  *
  * @author Douglas Lau
  */
-abstract public class ChangeJob extends GuiJob implements ChangeListener {
+abstract public class ChangeJob extends Job implements ChangeListener {
 
-	/** Most recent change event */
-	protected ChangeEvent event;
-
-	/** Create a new change job */
-	public ChangeJob(JComponent f, JSpinner s) {
-		super(f, s);
-		s.addChangeListener(this);
-	}
+	/** Scheduler */
+	private final Scheduler sched;
 
 	/** Create a new change job */
-	public ChangeJob(JComponent f, JTabbedPane p) {
-		super(f, p);
-		p.addChangeListener(this);
-	}
-
-	/** Create a new change job */
-	public ChangeJob(AbstractButton b) {
-		// Don't have the GuiJob disable the button after selection, or
-		// else we'll get into a ChangeEvent loop ...
-		super(null);
-		b.addChangeListener(this);
+	public ChangeJob(Scheduler s) {
+		sched = s;
 	}
 
 	/** State changed (from ChangeListener interface) */
-	public void stateChanged(ChangeEvent e) {
-		start();
-		event = e;
-		addToScheduler();
+	@Override public void stateChanged(ChangeEvent e) {
+		sched.addJob(this);
 	}
 }
