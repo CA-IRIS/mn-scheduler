@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2012  Minnesota Department of Transportation
+ * Copyright (C) 2012-2013  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ public final class SwingRunner {
 	private SwingRunner() { }
 
 	/** Run some runnable code */
-	static private void run(Runnable r) {
+	static private void runNow(Runnable r) {
 		long start = TimeSteward.currentTimeMillis();
 		r.run();
 		long e = TimeSteward.currentTimeMillis() - start;
@@ -41,16 +41,16 @@ public final class SwingRunner {
 	/** Invoke a Runnable later on the swing thread */
 	static private void invokeLater(final Runnable r) {
 		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				SwingRunner.run(r);
+			@Override public void run() {
+				runNow(r);
 			}
 		});
 	}
 
 	/** Invoke a Runnable on the swing thread */
-	static public void invoke(final Runnable r) {
+	static public void runSwing(final Runnable r) {
 		if(SwingUtilities.isEventDispatchThread())
-			run(r);
+			runNow(r);
 		else
 			invokeLater(r);
 	}
