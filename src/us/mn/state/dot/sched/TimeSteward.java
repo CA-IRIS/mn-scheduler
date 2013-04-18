@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2010-2012  Minnesota Department of Transportation
+ * Copyright (C) 2010-2013  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
  */
 package us.mn.state.dot.sched;
 
+import java.net.Socket;			// Suppress javadoc warning
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,20 +25,20 @@ import java.util.TimeZone;
  * To use this class correctly, there are several standard library methods
  * which must be avoided (or used only carefully).
  *
- * @see java.lang.System.currentTimeMillis()
- * @see java.lang.Object.wait(long)
- * @see java.lang.Object.wait(long, int)
- * @see java.lang.Thread.join(long)
- * @see java.lang.Thread.join(long, int)
- * @see java.lang.Thread.sleep(long)
- * @see java.lang.Thread.sleep(long, int)
- * @see java.net.DatagramSocket.setSoTimeout(int)
- * @see java.net.Socket.connect(java.net.SocketAddress, int)
- * @see java.net.Socket.setSoTimeout(int)
- * @see java.net.URLConnection.setConnectTimeout(int)
- * @see java.net.URLConnection.setReadTimeout(int)
- * @see java.util.Calendar.getInstance()
- * @see java.util.Date.Date()
+ * @see java.lang.System#currentTimeMillis()
+ * @see java.lang.Object#wait(long)
+ * @see java.lang.Object#wait(long, int)
+ * @see java.lang.Thread#join(long)
+ * @see java.lang.Thread#join(long, int)
+ * @see java.lang.Thread#sleep(long)
+ * @see java.lang.Thread#sleep(long, int)
+ * @see java.net.DatagramSocket#setSoTimeout(int)
+ * @see java.net.Socket#connect(java.net.SocketAddress, int)
+ * @see java.net.Socket#setSoTimeout(int)
+ * @see java.net.URLConnection#setConnectTimeout(int)
+ * @see java.net.URLConnection#setReadTimeout(int)
+ * @see java.util.Calendar#getInstance()
+ * @see java.util.Date#Date()
  *
  * @author Douglas Lau
  */
