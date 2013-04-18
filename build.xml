@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!-- ant build file for scheduler project
-     Copyright (C) 2008-2009  Minnesota Department of Transportation
+     Copyright (C) 2008-2013  Minnesota Department of Transportation
 
      This program is free software; you can redistribute it and/or modify
      it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 
 	<!-- Base directory configuration -->
 	<property name="src.dir" value="src"/>
-	<property name="lib.dir" value="lib"/>
 	<property name="test.dir" location="test"/>
 
 	<!-- Property configuration -->
@@ -35,11 +34,7 @@
 
 	<!-- Compiler configuration -->
 	<property name="build.compiler.pedantic" value="true"/>
-	<path id="classpath">
-		<fileset dir="${lib.dir}" includes="*.jar"/>
-	</path>
 	<path id="junit.classpath">
-		<path refid="classpath"/>
 		<pathelement location="${build.dir}/classes"/>
 		<pathelement location="${build.dir}/test"/>
 	</path>
@@ -61,12 +56,13 @@
 	<!-- Compile the source code -->
 	<target name="compile"
 		depends="prepare"
-		description="--> compile the source code">
+		description="Compile the source code">
 		<mkdir dir="${build.classes}"/>
 		<javac srcdir="${build.src}"
 		       destdir="${build.classes}"
 		       debug="${debug}"
 		       deprecation="on"
+		       includeantruntime="false"
 		       source="1.5"
 		       target="1.5">
 			<compilerarg value="-Xlint:unchecked"/>
@@ -76,7 +72,7 @@
 	<!-- Create the jar file -->
 	<target name="jar"
 		depends="compile"
-		description="--> generate the ${name} jar files">
+		description="Generate the jar file">
 		<jar jarfile="${build.lib}/${name}-${version}.jar">
 			<fileset dir="${build.classes}">
 				<include name="us/mn/state/dot/sched/**"/>
@@ -84,10 +80,10 @@
 		</jar>
 	</target>
 
-	<!-- Create api documentation -->
-	<target name="javadocs"
+	<!-- Create API documentation -->
+	<target name="docs"
 		depends="prepare"
-		description="--> create the javadocs for the project">
+		description="Create the javadocs">
 		<mkdir dir="${build.docs}"/>
 		<javadoc packagenames="${packages}"
 		         sourcepath="${basedir}/${build.src}"
@@ -103,8 +99,7 @@
 
 	<!-- Prepare junit test directories -->
 	<target name="prepare-junit"
-		depends="prepare"
-		description="--> prepare junit test cases">
+		depends="prepare">
 		<delete dir="${build.reports}" />
 		<mkdir dir="${build.test}" />
 		<mkdir dir="${build.reports}" />
@@ -112,12 +107,11 @@
 
 	<!-- Compile junit test cases -->
 	<target name="compile-junit"
-		depends="compile, prepare-junit"
-		description="--> compile junit test cases">
+		depends="compile, prepare-junit">
 		<javac srcdir="${test.dir}"
-		       includeAntRuntime="true"
 		       destdir="${build.test}"
 		       debug="true"
+		       includeantruntime="true"
 		       source="1.5"
 		       target="1.5">
 			<classpath refid="junit.classpath"/>
@@ -126,7 +120,7 @@
 
 	<!-- Run junit test cases -->
 	<target name="test" depends="compile-junit"
-		description="--> run junit test cases">
+		description="Run junit test cases">
 		<junit printsummary="yes" 
 		       fork="yes" 
 		       haltonfailure="yes" 
@@ -148,7 +142,7 @@
 
 	<!-- Clean up build and distribution directories -->
 	<target name="clean"
-		description="--> clean up the created directories">
+		description="Clean up the created directories">
 		<delete dir="${build.dir}"/>
 	</target>
 </project>
