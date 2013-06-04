@@ -140,7 +140,7 @@ abstract public class Job implements Comparable<Job> {
 	public void complete() {}
 
 	/** Compare this job with another one */
-	public int compareTo(Job other) {
+	@Override public int compareTo(Job other) {
 		long c = next_time - other.next_time;
 		if(c == 0)
 			c = interval - other.interval;
