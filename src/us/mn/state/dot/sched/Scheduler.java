@@ -99,10 +99,8 @@ public final class Scheduler {
 		Job job = waitJob();
 		while(!thread.isInterrupted()) {
 			performJob(job);
-			if(job.isRepeating()) {
-				job.computeNextTime();
-				todo.add(job);
-			}
+			if(job.isRepeating())
+				repeatJob(job);
 			removeJobs();
 			job = waitJob();
 		}
@@ -151,6 +149,12 @@ public final class Scheduler {
 		finally {
 			slog.log("Finished " + job.getName());
 		}
+	}
+
+	/** Add a job to be repeated */
+	private synchronized void repeatJob(Job job) {
+		job.computeNextTime();
+		todo.add(job);
 	}
 
 	/** Add a job for this scheduler to perform */
