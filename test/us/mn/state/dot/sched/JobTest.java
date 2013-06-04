@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2009  Minnesota Department of Transportation
+ * Copyright (C) 2009-2013  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,13 @@ public class JobTest extends TestCase {
 			public void perform() {}
 		};
 		scheduler.addJob(job);
-		job.waitForCompletion();
+		try {
+			job.waitForCompletion(30000);
+		}
+		catch(java.util.concurrent.TimeoutException e) {
+			e.printStackTrace();
+			assertTrue(false);
+		}
 		long end = System.currentTimeMillis();
 		System.err.println("elapsed: " + (end - start));
 		assertTrue(end >= start + 500);
