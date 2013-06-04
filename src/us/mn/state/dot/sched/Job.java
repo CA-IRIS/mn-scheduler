@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2012  Minnesota Department of Transportation
+ * Copyright (C) 2000-2013  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@ package us.mn.state.dot.sched;
 
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Job for the scheduler to perform.  When the scheduler is ready, the perform
@@ -154,11 +155,20 @@ abstract public class Job implements Comparable<Job> {
 		return 0;
 	}
 
-	/** Wait for the job to complete */
-	public synchronized void waitForCompletion() {
+	/** Wait for the job to complete.
+	 * @param ms Time to wait before giving up.
+	 * @throws TimeoutExcepiton if timeout expires before completion. */
+	public synchronized void waitForCompletion(long ms)
+		throws TimeoutException
+	{
+		long waited = 0;
 		while(n_complete == 0) {
+			if(waited >= ms)
+				throw new TimeoutException();
+			long w = Math.min(100, ms - waited);
 			try {
-				TimeSteward.wait(this, 1000);
+				TimeSteward.wait(this, w);
+				waited += w;
 			}
 			catch(InterruptedException e) {
 				// keep waiting
