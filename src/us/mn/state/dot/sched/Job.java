@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2013  Minnesota Department of Transportation
+ * Copyright (C) 2000-2014  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ abstract public class Job implements Comparable<Job> {
 	 * @param field java.util.Calendar field constant.
 	 * @param value Amount of specified field.
 	 * @return Number of milliseconds in interval. */
-	static protected long calculateInterval(int field, int value) {
+	static private long calculateInterval(int field, int value) {
 		Calendar c = Calendar.getInstance();
 		c.setTimeInMillis(0);
 		c.add(field, value);
@@ -110,7 +110,7 @@ abstract public class Job implements Comparable<Job> {
 	}
 
 	/** Compute the most recently past scheduled time */
-	protected long computePastTime() {
+	private long computePastTime() {
 		long now = TimeSteward.currentTimeMillis();
 		// We need to adjust the offset time by the time zone offset
 		// and the DST offset so that daily jobs are performed at the
@@ -140,7 +140,8 @@ abstract public class Job implements Comparable<Job> {
 	public void complete() {}
 
 	/** Compare this job with another one */
-	@Override public int compareTo(Job other) {
+	@Override
+	public int compareTo(Job other) {
 		long c = next_time - other.next_time;
 		if(c == 0)
 			c = interval - other.interval;
