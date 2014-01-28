@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2010-2013  Minnesota Department of Transportation
+ * Copyright (C) 2010-2014  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ import java.util.TimeZone;
 public final class TimeSteward {
 
 	/** Time source */
-	static protected TimeSource source = new SystemTimeSource();
+	static private TimeSource source = new SystemTimeSource();
 
 	/** Don't allow instantiation */
 	private TimeSteward() { }
