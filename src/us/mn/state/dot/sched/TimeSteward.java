@@ -66,6 +66,16 @@ public final class TimeSteward {
 		source.sleep(ms);
 	}
 
+	/** Sleep without interruption */
+	static public void sleep_well(long ms) {
+		try {
+			sleep(ms);
+		}
+		catch (InterruptedException e) {
+			// Ignore
+		}
+	}
+
 	/** Wait until an object is notified, or timeout expires */
 	static public void wait(Object monitor, long ms)
 		throws InterruptedException
