@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2013  Minnesota Department of Transportation
+ * Copyright (C) 2000-2016  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ public final class Scheduler {
 
 	/** Handle an exception */
 	private void handleException(Exception e) {
-		if(handler != null)
+		if (handler != null)
 			handler.handle(e);
 		else
 			HANDLER.handle(e);
@@ -84,8 +84,8 @@ public final class Scheduler {
 				try {
 					performJobs();
 				}
-				catch(InterruptedException e) {
-					if(!disposing)
+				catch (InterruptedException e) {
+					if (!disposing)
 						handleException(e);
 				}
 			}
@@ -97,9 +97,9 @@ public final class Scheduler {
 	/** Perform jobs as they are scheduled */
 	private void performJobs() throws InterruptedException {
 		Job job = waitJob();
-		while(!thread.isInterrupted()) {
+		while (!thread.isInterrupted()) {
 			performJob(job);
-			if(job.isRepeating())
+			if (job.isRepeating())
 				repeatJob(job);
 			removeJobs();
 			job = waitJob();
@@ -111,7 +111,7 @@ public final class Scheduler {
 	private synchronized Job waitJob() throws InterruptedException {
 		Job job = nextJob();
 		long delay = job.delay();
-		while(delay > 0) {
+		while (delay > 0) {
 			TimeSteward.wait(this, delay);
 			// We need to check the next job here in case the job
 			// was removed or a new job was added while we were
@@ -125,7 +125,7 @@ public final class Scheduler {
 
 	/** Get the next job on the "todo" list */
 	private synchronized Job nextJob() throws InterruptedException {
-		while(todo.isEmpty()) {
+		while (todo.isEmpty()) {
 			wait();
 		}
 		return todo.first();
@@ -137,10 +137,10 @@ public final class Scheduler {
 			slog.log("Starting " + job.getName());
 			job.performTask();
 		}
-		catch(Exception e) {
+		catch (Exception e) {
 			handleException(e);
 		}
-		catch(VirtualMachineError e) {
+		catch (VirtualMachineError e) {
 			System.err.println("VIRTUAL MACHINE ERROR");
 			e.printStackTrace();
 			System.err.println("FATAL: RESTARTING");
@@ -173,7 +173,7 @@ public final class Scheduler {
 	 * scheduler thread in case the job is being performed while removeJob
 	 * is called. */
 	private synchronized void removeJobs() {
-		for(Job job: toremove)
+		for (Job job: toremove)
 			todo.remove(job);
 		toremove.clear();
 	}
