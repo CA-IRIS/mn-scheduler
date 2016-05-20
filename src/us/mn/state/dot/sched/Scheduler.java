@@ -24,6 +24,9 @@ import java.util.TreeSet;
  */
 public final class Scheduler {
 
+	/** Scheduler thread group */
+	static private final ThreadGroup GROUP = new ThreadGroup("SCHED");
+
 	/** Default exception handler */
 	static private ExceptionHandler HANDLER = new ExceptionHandler() {
 		public boolean handle(Exception e) {
@@ -79,7 +82,7 @@ public final class Scheduler {
 	public Scheduler(String name, ExceptionHandler h) {
 		slog = new DebugLog(name, h);
 		handler = h;
-		thread = new Thread(name) {
+		thread = new Thread(GROUP, name) {
 			public void run() {
 				try {
 					performJobs();
