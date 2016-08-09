@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2009-2013  Minnesota Department of Transportation
+ * Copyright (C) 2009-2016  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +14,8 @@
  */
 package us.mn.state.dot.sched;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import junit.framework.TestCase;
 
 /** 
@@ -29,7 +31,7 @@ public class JobTest extends TestCase {
 		super(name);
 	}
 
-	public void test() {
+	public void testOneShot() {
 		long start = System.currentTimeMillis();
 		Job job = new Job(500) {
 			public void perform() {}
@@ -38,12 +40,35 @@ public class JobTest extends TestCase {
 		try {
 			job.waitForCompletion(30000);
 		}
-		catch(java.util.concurrent.TimeoutException e) {
+		catch (java.util.concurrent.TimeoutException e) {
 			e.printStackTrace();
 			assertTrue(false);
 		}
 		long end = System.currentTimeMillis();
-		System.err.println("elapsed: " + (end - start));
 		assertTrue(end >= start + 500);
+	}
+
+	public void testRepeating() {
+		final ArrayList<Long> times = new ArrayList<Long>();
+		Job job = new Job(Calendar.SECOND, 5) {
+			public void perform() {
+				times.add(System.currentTimeMillis());
+			}
+		};
+		scheduler.addJob(job);
+		while (times.size() < 2) {
+			try {
+				Thread.sleep(1000);
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+				assertTrue(false);
+			}
+		}
+		long first = times.get(0);
+		long second = times.get(1);
+		long elapsed = second - first;
+		System.out.println("Elapsed: " + elapsed);
+		assertTrue(elapsed >= (5000 - 1));
 	}
 }
