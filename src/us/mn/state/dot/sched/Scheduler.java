@@ -137,7 +137,8 @@ public final class Scheduler {
 	/** Perform a job */
 	private void performJob(Job job) {
 		try {
-			slog.log("Starting " + job.getName());
+			if (slog.isOpen())
+				slog.log("Starting " + job.getName());
 			job.performTask();
 		}
 		catch (Exception e) {
@@ -150,7 +151,8 @@ public final class Scheduler {
 			System.exit(1);
 		}
 		finally {
-			slog.log("Finished " + job.getName());
+			if (slog.isOpen())
+				slog.log("Finished " + job.getName());
 		}
 	}
 
