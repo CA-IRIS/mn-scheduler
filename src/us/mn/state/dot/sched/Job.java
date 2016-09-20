@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2014  Minnesota Department of Transportation
+ * Copyright (C) 2000-2016  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,32 +126,35 @@ abstract public class Job implements Comparable<Job> {
 		}
 		finally {
 			complete();
-			synchronized(this) {
-				n_complete++;
-				notify();
-			}
+			incrementComplete();
 		}
+	}
+
+	/** Do this upon completion of the job */
+	public void complete() {}
+
+	/** Increment the complete counter */
+	private synchronized void incrementComplete() {
+		n_complete++;
+		notify();
 	}
 
 	/** Actual "job" to be performed */
 	abstract public void perform() throws Exception;
 
-	/** Do this upon completion of the job */
-	public void complete() {}
-
 	/** Compare this job with another one */
 	@Override
 	public int compareTo(Job other) {
 		long c = next_time - other.next_time;
-		if(c == 0)
+		if (c == 0)
 			c = interval - other.interval;
-		if(c == 0)
+		if (c == 0)
 			c = offset - other.offset;
-		if(c == 0)
+		if (c == 0)
 			c = id - other.id;
-		if(c < 0)
+		if (c < 0)
 			return -1;
-		if(c > 0)
+		if (c > 0)
 			return 1;
 		return 0;
 	}
@@ -163,15 +166,15 @@ abstract public class Job implements Comparable<Job> {
 		throws TimeoutException
 	{
 		long waited = 0;
-		while(n_complete == 0) {
-			if(waited >= ms)
+		while (n_complete == 0) {
+			if (waited >= ms)
 				throw new TimeoutException();
 			long w = Math.min(100, ms - waited);
 			try {
 				TimeSteward.wait(this, w);
 				waited += w;
 			}
-			catch(InterruptedException e) {
+			catch (InterruptedException e) {
 				// keep waiting
 			}
 		}
