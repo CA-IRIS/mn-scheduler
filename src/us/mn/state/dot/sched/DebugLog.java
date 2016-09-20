@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2002-2012  Minnesota Department of Transportation
+ * Copyright (C) 2002-2016  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * DebugLog is a class for logging debugging information. Logging can be
- * enabled or disabled by creating or deleting the log file. Just use "touch
+ * DebugLog is a class for logging debugging information.  Logging can be
+ * enabled or disabled by creating or deleting the log file.  Just use "touch
  * {filename}" to start logging.
  *
  * @author Douglas Lau
@@ -47,7 +47,7 @@ public final class DebugLog {
 	 * @param m Initial message when creating log file.
 	 * @param h Default exception handler. */
 	static public void init(File p, String m, ExceptionHandler h) {
-		if(p.isDirectory())
+		if (p.isDirectory())
 			PATH = p;
 		MESSAGE = m;
 		HANDLER = h;
@@ -65,7 +65,7 @@ public final class DebugLog {
 
 	/** Handle an exception */
 	private void handleException(Exception e) {
-		if(handler != null)
+		if (handler != null)
 			handler.handle(e);
 		else
 			HANDLER.handle(e);
@@ -97,7 +97,7 @@ public final class DebugLog {
 	/** Check if we can write to the log file */
 	private synchronized boolean canWrite(File file) throws IOException {
 		boolean w = file.canWrite();
-		if(bw != null && (!w || file.length() == 0)) {
+		if (bw != null && (!w || file.length() == 0)) {
 			bw.close();
 			bw = null;
 		}
@@ -109,7 +109,7 @@ public final class DebugLog {
 		try {
 			return canWrite(getFile());
 		}
-		catch(IOException e) {
+		catch (IOException e) {
 			handleException(e);
 			return false;
 		}
@@ -119,17 +119,17 @@ public final class DebugLog {
 	public synchronized void log(String m) {
 		try {
 			File file = getFile();
-			if(canWrite(file))
+			if (canWrite(file))
 				log(file, m);
 		}
-		catch(IOException e) {
+		catch (IOException e) {
 			handleException(e);
 		}
 	}
 
 	/** Write a message in the debug log file */
 	private void log(File file, String m) throws IOException {
-		if(bw == null) {
+		if (bw == null) {
 			bw = new BufferedWriter(new FileWriter(file, true));
 			log(bw, "DebugLog: " + name);
 		}
