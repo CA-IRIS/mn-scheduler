@@ -136,8 +136,9 @@ public final class Scheduler {
 
 	/** Perform a job */
 	private void performJob(Job job) {
+		boolean op = slog.isOpen();
 		try {
-			if (slog.isOpen())
+			if (op)
 				slog.log("Starting " + job.getName());
 			job.performTask();
 		}
@@ -151,7 +152,7 @@ public final class Scheduler {
 			System.exit(1);
 		}
 		finally {
-			if (slog.isOpen())
+			if (op)
 				slog.log("Finished " + job.getName());
 		}
 	}
