@@ -1,6 +1,6 @@
 /*
  * IRIS -- Intelligent Roadway Information System
- * Copyright (C) 2000-2016  Minnesota Department of Transportation
+ * Copyright (C) 2000-2017  Minnesota Department of Transportation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@ package us.mn.state.dot.sched;
 
 import java.util.Calendar;
 import java.util.TimeZone;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Job for the scheduler to perform.  When the scheduler is ready, the perform
@@ -38,10 +38,10 @@ abstract public class Job implements Comparable<Job> {
 	}
 
 	/** Next available job identifier */
-	static private long next_id = 0;
+	static private final AtomicLong next_id = new AtomicLong();
 
 	/** Unique job identifier */
-	private final long id = next_id++;
+	private final long id = next_id.getAndIncrement();
 
 	/** Time interval to perform this job, in milliseconds.  For
 	 * non-repeating jobs, this must be 0. */
@@ -52,9 +52,6 @@ abstract public class Job implements Comparable<Job> {
 
 	/** Next time this job must be performed */
 	private long next_time;
-
-	/** Count of how many times the job has completed */
-	private int n_complete = 0;
 
 	/**
 	 * Create a new scheduler job.
@@ -126,18 +123,11 @@ abstract public class Job implements Comparable<Job> {
 		}
 		finally {
 			complete();
-			incrementComplete();
 		}
 	}
 
 	/** Do this upon completion of the job */
-	public void complete() {}
-
-	/** Increment the complete counter */
-	private synchronized void incrementComplete() {
-		n_complete++;
-		notify();
-	}
+	public void complete() { }
 
 	/** Actual "job" to be performed */
 	abstract public void perform() throws Exception;
@@ -157,27 +147,6 @@ abstract public class Job implements Comparable<Job> {
 		if (c > 0)
 			return 1;
 		return 0;
-	}
-
-	/** Wait for the job to complete.
-	 * @param ms Time to wait before giving up.
-	 * @throws TimeoutExcepiton if timeout expires before completion. */
-	public synchronized void waitForCompletion(long ms)
-		throws TimeoutException
-	{
-		long waited = 0;
-		while (n_complete == 0) {
-			if (waited >= ms)
-				throw new TimeoutException();
-			long w = Math.min(100, ms - waited);
-			try {
-				TimeSteward.wait(this, w);
-				waited += w;
-			}
-			catch (InterruptedException e) {
-				// keep waiting
-			}
-		}
 	}
 
 	/** Get the name of the job */
