@@ -97,8 +97,6 @@ public final class Worker {
 	/** Add work to perform */
 	public synchronized void addWork(Work w) {
 		todo.add(w);
-		if (todo.size() > 10000)
-			System.err.println("Worker OVERLOADED: " + thread);
 		notify();
 	}
 
