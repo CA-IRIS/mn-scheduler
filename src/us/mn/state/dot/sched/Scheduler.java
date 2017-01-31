@@ -166,10 +166,8 @@ public final class Scheduler {
 	/** Add a job for this scheduler to perform */
 	public synchronized void addJob(Job job) {
 		todo.add(job);
-		if (todo.size() > 1000) {
-			slog.log("OVERLOADED");
-			System.err.println("Scheduler OVERLOADED: " + thread);
-		}
+		if (slog.isOpen() && todo.size() > 5000)
+			slog.log("OVERLOADED: " + todo.size());
 		notify();
 	}
 
