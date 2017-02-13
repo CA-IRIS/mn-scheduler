@@ -110,4 +110,9 @@ public final class Worker {
 		disposing = true;
 		thread.interrupt();
 	}
+
+	/** Get the count of work in the queue */
+	public synchronized int size() {
+		return todo.size();
+	}
 }
