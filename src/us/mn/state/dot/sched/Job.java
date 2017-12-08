@@ -73,6 +73,18 @@ abstract public class Job implements Comparable<Job> {
 	 * Create a new scheduler job.
 	 * @param iField java.util.Calendar field for time interval
 	 * @param i Time interval to schedule the job
+	 * @param start_now If true, don't wait before starting.
+	 */
+	public Job(int iField, int i, boolean start_now) {
+		this(iField, i, Calendar.SECOND, 0);
+		if (start_now)
+			next_time = TimeSteward.currentTimeMillis();
+	}
+
+	/**
+	 * Create a new scheduler job.
+	 * @param iField java.util.Calendar field for time interval
+	 * @param i Time interval to schedule the job
 	 */
 	public Job(int iField, int i) {
 		this(iField, i, Calendar.SECOND, 0);
